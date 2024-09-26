@@ -144,6 +144,8 @@ INSERT INTO `financial` (f_date, f_expense, f_income, f_total) VALUES ('2024-09-
 -- ดูรายรับรายจ่าย (select) R
 SELECT * FROM `financial`;
 
+-- 65 Querys total
+
 
 
 
