@@ -2,6 +2,7 @@ package ku.cs.restaurant.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,13 +19,9 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
             )
             .csrf(AbstractHttpConfigurer::disable);
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder(12);
     }
 }

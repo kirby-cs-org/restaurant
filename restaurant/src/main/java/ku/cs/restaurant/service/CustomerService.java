@@ -15,8 +15,8 @@ public class CustomerService {
     private CustomerRepository repository;
 
     // สมัครสมาชิก (insert) C
-    public void createCustomer(@Valid Customer customer) {
-        repository.save(customer);
+    public Customer createCustomer(Customer customer) {
+        return repository.save(customer);
     }
 
     // ดูรายชื่อสมาชิก (select) R

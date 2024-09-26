@@ -1,8 +1,5 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.CustomerDto;
-import ku.cs.restaurant.dto.CustomerToDto;
-import ku.cs.restaurant.dto.DtoToCustomer;
 import ku.cs.restaurant.entity.Customer;
 import ku.cs.restaurant.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +18,13 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     private CustomerService service;
-    @Autowired
-    private CustomerToDto customerToDTO;
-    @Autowired
-    private DtoToCustomer dtoToCustomer;
 
     // สมัครสมาชิก (insert) C
     @PostMapping("/customer/signup")
-    public ResponseEntity<CustomerDto> signUp(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<Customer> signUp(@RequestBody Customer customer) {
         try {
-            Customer customer = dtoToCustomer.convert(customerDto);
-            service.createCustomer(customer);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            Customer createdCustomer = service.createCustomer(customer);
+            return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -40,11 +32,8 @@ public class CustomerController {
 
     // ดูรายชื่อสมาชิก (select) R
     @GetMapping("/customer")
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        List<CustomerDto> customerDTOS = new ArrayList<>();
-        for (Customer customer : service.getAllCustomers()) {
-            customerDTOS.add(customerToDTO.convert(customer));
-        }
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customerDTOS = new ArrayList<>(service.getAllCustomers());
 
         return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
     }
