@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -30,6 +31,9 @@ public class Product {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "p_status")
-    private ProductStatus status;
+    private Status status;
+
+    @OneToMany(mappedBy = "product")
+    private Set<Recipe> recipes;
 }
 

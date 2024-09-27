@@ -4,7 +4,7 @@ import ku.cs.restaurant.dto.product.ProductDeleteDto;
 import ku.cs.restaurant.dto.product.ProductQtyUpdateDto;
 import org.springframework.web.multipart.MultipartFile;
 import ku.cs.restaurant.entity.Product;
-import ku.cs.restaurant.entity.ProductStatus;
+import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +60,7 @@ public class ProductController {
     @GetMapping("/product/status/{status}")
     public ResponseEntity<List<Product>> getByStatus(@PathVariable String status) {
         try {
-            ProductStatus productStatus = ProductStatus.valueOf(status.toUpperCase());
+            Status productStatus = Status.valueOf(status.toUpperCase());
             List<Product> products = service.getByStatus(productStatus);
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -85,23 +85,11 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    // เพิ่มจำนวนเมนู (update) U
-    @PatchMapping("/product/increase")
+    // Update จำนวนเมนู (update) U
+    @PatchMapping("/product")
     public ResponseEntity<Product> increaseMenu(@RequestBody ProductQtyUpdateDto updateDto) {
         try {
-            Optional<Product> updatedProduct = service.increaseMenu(updateDto.getId(), updateDto.getQty());
-            return updatedProduct.map(product -> new ResponseEntity<>(product, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // ลดจำนวนเมนู (update) U
-    @PatchMapping("/product/decrease")
-    public ResponseEntity<Product> decreaseMenu(@RequestBody ProductQtyUpdateDto updateDto) {
-        try {
-            Optional<Product> updatedProduct = service.decreaseMenu(updateDto.getId(), updateDto.getQty());
+            Optional<Product> updatedProduct = service.updateMenu(updateDto.getId(), updateDto.getQty());
             return updatedProduct.map(product -> new ResponseEntity<>(product, HttpStatus.OK))
                     .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (Exception e) {
