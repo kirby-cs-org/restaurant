@@ -16,6 +16,9 @@ public class Product {
     @Column(name = "p_id")
     private UUID id;
 
+    @Column(name = "p_image")
+    private String imagePath;
+
     @Column(name = "p_name")
     private String name;
 
