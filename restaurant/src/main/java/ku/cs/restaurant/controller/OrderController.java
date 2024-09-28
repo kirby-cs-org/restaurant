@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 public class OrderController {
@@ -22,7 +21,7 @@ public class OrderController {
     @PostMapping("/order")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         try {
-            Order createdOrder = service.createdOrder(order);
+            Order createdOrder = service.createOrder(order);
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -42,7 +41,7 @@ public class OrderController {
     @GetMapping("/order/status")
     public ResponseEntity<List<Order>> getOrdersByStatus(@RequestBody OrderStatus status) {
         try {
-            List<Order> orders = service.findByStatus(status);
+            List<Order> orders = service.findOrderByStatus(status);
             return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
