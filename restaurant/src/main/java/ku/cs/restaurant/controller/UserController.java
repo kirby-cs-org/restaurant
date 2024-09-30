@@ -48,10 +48,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/customer")
+    @GetMapping("/users")
     public ResponseEntity<List<User>> getAllCustomers() {
-        List<User> customerDTOS = new ArrayList<>(userService.getAllCustomers());
+        List<User> customers = new ArrayList<>(userService.getAllCustomers());
 
-        return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 }
