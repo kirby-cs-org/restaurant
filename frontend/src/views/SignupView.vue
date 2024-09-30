@@ -53,7 +53,7 @@ const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const phoneNumber = ref("");
-const errorMessage = ref(""); // State to hold error messages
+const errorMessage = ref("");
 
 const register = async () => {
   // Reset the error message
@@ -62,7 +62,7 @@ const register = async () => {
   // Check if passwords match
   if (password.value !== confirmPassword.value) {
     errorMessage.value = "Passwords do not match.";
-    return; // Stop execution if passwords do not match
+    return;
   }
 
   try {
@@ -73,10 +73,8 @@ const register = async () => {
       phone: phoneNumber.value,
     });
 
-    // Handle successful registration (e.g., redirect, show a message)
     console.log("Registration successful:", response.data);
   } catch (error) {
-    // Handle registration error (e.g., show error message)
     console.error("Registration failed:", error.response.data);
     errorMessage.value = "Registration failed. Please try again.";
   }
