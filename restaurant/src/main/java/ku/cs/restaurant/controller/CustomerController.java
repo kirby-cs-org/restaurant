@@ -1,7 +1,7 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.entity.Customer;
-import ku.cs.restaurant.service.CustomerService;
+import ku.cs.restaurant.entity.User;
+import ku.cs.restaurant.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,23 +17,23 @@ import java.util.List;
 @RestController
 public class CustomerController {
     @Autowired
-    private CustomerService service;
+    private UserService service;
 
-    // สมัครสมาชิก (insert) C
+    // สมัครสมาชิก
     @PostMapping("/customer/signup")
-    public ResponseEntity<Customer> signUp(@RequestBody Customer customer) {
+    public ResponseEntity<User> signUp(@RequestBody User user) {
         try {
-            Customer createdCustomer = service.createCustomer(customer);
+            User createdCustomer = service.createUser(user);
             return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    // ดูรายชื่อสมาชิก (select) R
+    // ดูรายชื่อสมาชิก
     @GetMapping("/customer")
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        List<Customer> customerDTOS = new ArrayList<>(service.getAllCustomers());
+    public ResponseEntity<List<User>> getAllCustomers() {
+        List<User> customerDTOS = new ArrayList<>(service.getAllCustomers());
 
         return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
     }

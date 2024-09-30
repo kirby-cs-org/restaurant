@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class Customer {
+public class User {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.VARCHAR)
