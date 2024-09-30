@@ -1,4 +1,4 @@
-package ku.cs.restaurant.dto.ingredient;
+package ku.cs.restaurant.dto.order;
 
 import ku.cs.restaurant.entity.OrderStatus;
 import lombok.Data;
