@@ -37,7 +37,7 @@ public class UserController {
                 return new ResponseEntity<>("Passwords do not match", HttpStatus.BAD_REQUEST);
 
             User user = new User();
-            user.setName(username);
+            user.setUsername(username);
             user.setPhone(phone);
             user.setPassword(password);
 

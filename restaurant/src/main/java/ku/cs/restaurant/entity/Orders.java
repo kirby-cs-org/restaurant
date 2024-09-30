@@ -1,20 +1,16 @@
 package ku.cs.restaurant.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import ku.cs.restaurant.entity.OrderStatus;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity 
 @Data
-public class Order {
+public class Orders {
     @Id 
     @GeneratedValue 
     @JdbcTypeCode(SqlTypes.VARCHAR) 
@@ -25,6 +21,7 @@ public class Order {
     private int qty;
 
     @Column(name = "o_status")
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Column(name = "o_timestamp")

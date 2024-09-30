@@ -41,15 +41,15 @@
 - **PATCH** /api/orders/{id}/status            # อัพเดทสถานะออเดอร์ (ใช้ Body)           - **for admin**
 
 ### Order Line API
-- **POST** /api/order-lines                   # สร้างราคารวมต่อรายการอาหาร (ใช้ Body)     - **for customer**
-- **GET** /api/order-lines                    # ดูรายการออเดอร์ทั้งหมด                    - **for admin**
-- **GET** /api/order-lines/order/{orderId}    # ดูรายการตามออเดอร์                       - **for customer**
-- **DELETE** /api/order-lines/{id}             # ลบรายการในออเดอร์                         - **for admin**
+- **POST** /api/orders-lines                   # สร้างราคารวมต่อรายการอาหาร (ใช้ Body)     - **for customer**
+- **GET** /api/orders-lines                    # ดูรายการออเดอร์ทั้งหมด                    - **for admin**
+- **GET** /api/orders-lines/orders/{orderId}    # ดูรายการตามออเดอร์                       - **for customer**
+- **DELETE** /api/orders-lines/{id}             # ลบรายการในออเดอร์                         - **for admin**
 
 ### Transaction API
 - **POST** /api/transactions                   # สร้างการชำระเงินใหม่ (ใช้ Body)           - **for customer**
 - **GET** /api/transactions                    # ดูการชำระเงินทั้งหมด                      - **for admin**
-- **GET** /api/transactions/order/{orderId}    # ดูการชำระเงินตามออเดอร์                  - **for admin**
+- **GET** /api/transactions/orders/{orderId}    # ดูการชำระเงินตามออเดอร์                  - **for admin**
 
 ### Financial API
 - **POST** /api/financials                     # สร้างรายรับรายจ่ายใหม่ (ใช้ Body)        - **for admin**

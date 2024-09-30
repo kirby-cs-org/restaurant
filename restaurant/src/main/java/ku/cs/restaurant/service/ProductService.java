@@ -1,7 +1,6 @@
 package ku.cs.restaurant.service;
 
 import ku.cs.restaurant.entity.Product;
-import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.repository.ProductRepository; // Assuming you have a repository
 import ku.cs.restaurant.repository.RecipeRepository;

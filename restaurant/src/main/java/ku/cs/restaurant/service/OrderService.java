@@ -1,6 +1,6 @@
 package ku.cs.restaurant.service;
 
-import ku.cs.restaurant.entity.Order;
+import ku.cs.restaurant.entity.Orders;
 import ku.cs.restaurant.repository.OrderRepository;
 import ku.cs.restaurant.entity.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,23 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     // สร้างออเดอร์ใหม่ 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
+    public Orders createOrder(Orders orders) {
+        return orderRepository.save(orders);
     }
     // ดูทั้งหมด
-    public List<Order> findOrders() {
+    public List<Orders> findOrders() {
         return orderRepository.findAll();
     }
     // ดูตามสถานะ
-    public List<Order> findOrderByStatus(OrderStatus status) {
+    public List<Orders> findOrderByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status);
     }
     // อัพเดทสถานะ 
-    public Optional<Order> updateOrderStatusById(UUID id, OrderStatus status) {
-        Optional<Order> optionalOrder = orderRepository.findById(id);
-        optionalOrder.ifPresent(order -> {
-            order.setStatus(status);
-            orderRepository.save(order);
+    public Optional<Orders> updateOrderStatusById(UUID id, OrderStatus status) {
+        Optional<Orders> optionalOrder = orderRepository.findById(id);
+        optionalOrder.ifPresent(orders -> {
+            orders.setStatus(status);
+            orderRepository.save(orders);
         });
 
         return optionalOrder;

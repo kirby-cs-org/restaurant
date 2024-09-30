@@ -1,7 +1,7 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.ingredient.UpdateStatusRequest;
-import ku.cs.restaurant.entity.Order;
+import ku.cs.restaurant.dto.order.UpdateStatusRequest;
+import ku.cs.restaurant.entity.Orders;
 import ku.cs.restaurant.entity.OrderStatus;
 import ku.cs.restaurant.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,19 @@ public class OrderController {
 
     // สร้าง
     @PostMapping("/order")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+    public ResponseEntity<Orders> createOrder(@RequestBody Orders orders) {
         try {
-            Order createdOrder = service.createOrder(order);
-            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+            Orders createdOrders = service.createOrder(orders);
+            return new ResponseEntity<>(createdOrders, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
     // ดูทั้งหมด
     @GetMapping("/order")
-    public ResponseEntity<List<Order>> getAllOrders() {
+    public ResponseEntity<List<Orders>> getAllOrders() {
         try {
-            List<Order> orders = service.findOrders();
+            List<Orders> orders = service.findOrders();
             return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -39,9 +39,9 @@ public class OrderController {
     }
     // ดูตามสถานะ
     @GetMapping("/order/status")
-    public ResponseEntity<List<Order>> getOrdersByStatus(@RequestBody OrderStatus status) {
+    public ResponseEntity<List<Orders>> getOrdersByStatus(@RequestBody OrderStatus status) {
         try {
-            List<Order> orders = service.findOrderByStatus(status);
+            List<Orders> orders = service.findOrderByStatus(status);
             return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -49,9 +49,9 @@ public class OrderController {
     }
     // อัพเดทสถานะ
     @PatchMapping("/order")
-    public ResponseEntity<Optional<Order>> updateOrderStatusById(@RequestBody UpdateStatusRequest request) {
+    public ResponseEntity<Optional<Orders>> updateOrderStatusById(@RequestBody UpdateStatusRequest request) {
         try {
-            Optional<Order> updatedOrder = service.updateOrderStatusById(request.getId(), request.getStatus());
+            Optional<Orders> updatedOrder = service.updateOrderStatusById(request.getId(), request.getStatus());
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

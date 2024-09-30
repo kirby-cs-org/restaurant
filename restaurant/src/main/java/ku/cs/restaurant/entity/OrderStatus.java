@@ -1,5 +1,7 @@
 package ku.cs.restaurant.entity;
 
-public class OrderStatus {
-    
+public enum OrderStatus {
+    PENDING,
+    COMPLETE,
+    CANCEL
 }

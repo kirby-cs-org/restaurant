@@ -1,7 +1,6 @@
 package ku.cs.restaurant.repository;
 
 import ku.cs.restaurant.entity.Product;
-import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

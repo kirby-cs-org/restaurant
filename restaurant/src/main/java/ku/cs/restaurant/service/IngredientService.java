@@ -60,7 +60,7 @@ public class IngredientService {
             ingredient.setStatus(newStatus);
             repository.save(ingredient);
         });
-        return optionalIngredient; // Return the updated ingredient or empty if not found
+        return optionalIngredient;
     }
 
     // Delete an ingredient
