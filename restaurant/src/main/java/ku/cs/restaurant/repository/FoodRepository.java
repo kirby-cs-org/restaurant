@@ -1,6 +1,6 @@
 package ku.cs.restaurant.repository;
 
-import ku.cs.restaurant.entity.Product;
+import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, UUID> {
-    List<Product> findByStatus(Status status);
-    Optional<Product> findById(UUID id);
+public interface FoodRepository extends JpaRepository<Food, UUID> {
+    List<Food> findFoodsByStatus(Status status);
+    Optional<Food> findFoodById(UUID id);
 }

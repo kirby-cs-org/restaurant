@@ -5,35 +5,33 @@ import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
-public class Product {
+public class Food {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "p_id")
+    @Column(name = "f_id")
     private UUID id;
 
-    @Column(name = "p_image")
+    @Column(name = "f_image")
     private String imagePath;
 
-    @Column(name = "p_name")
+    @Column(name = "f_name")
     private String name;
 
-    @Column(name = "p_price")
+    @Column(name = "f_price")
     private double price;
 
-    @Column(name = "p_qty")
-    private int qty;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "p_status")
+    @Column(name = "f_status")
     private Status status;
 
-    @OneToMany(mappedBy = "product")
-    private Set<Recipe> recipes;
+    @OneToMany(mappedBy = "food")
+    private List<Recipe> recipes = new ArrayList<>();
 }
 

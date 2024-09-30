@@ -1,4 +1,4 @@
-package ku.cs.restaurant.dto.product;
+package ku.cs.restaurant.dto.food;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class ProductQtyUpdateDto {
+public class FoodQtyUpdateDto {
     @NotBlank
     private UUID id;
     @NotBlank

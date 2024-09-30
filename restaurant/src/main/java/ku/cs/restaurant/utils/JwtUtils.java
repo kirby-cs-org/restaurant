@@ -65,6 +65,6 @@ public class JwtUtils {
 
     // Helper method to get the signing key from the secret
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret)); // decode Base64 encoded secret
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 }

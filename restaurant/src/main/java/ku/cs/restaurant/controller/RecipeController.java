@@ -2,6 +2,7 @@ package ku.cs.restaurant.controller;
 
 import ku.cs.restaurant.dto.recipe.UpdateQtyRequest;
 import ku.cs.restaurant.entity.Recipe;
+import ku.cs.restaurant.entity.RecipeKey;
 import ku.cs.restaurant.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,20 +41,9 @@ public class RecipeController {
         }
     }
 
-    @GetMapping("/recipe/{id}")
-    public ResponseEntity<List<Recipe>> getRecipesByProductId(@PathVariable UUID id) {
-        try {
-            List<Recipe> recipes = recipeService.getRecipesByProductId(id);
-            return new ResponseEntity<>(recipes, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
     // Get recipe by ID using request body
     @PostMapping("/recipe/getById")
-    public ResponseEntity<Recipe> getRecipeById(@RequestBody UUID id) {
+    public ResponseEntity<Recipe> getRecipeById(@RequestBody RecipeKey id) {
         try {
             Optional<Recipe> recipe = recipeService.getRecipeById(id);
             return recipe.map(ResponseEntity::ok)
@@ -76,7 +66,7 @@ public class RecipeController {
 
     // Delete a recipe using request body
     @DeleteMapping("/recipe/delete")
-    public ResponseEntity<Void> deleteRecipe(@RequestBody UUID id) {
+    public ResponseEntity<Void> deleteRecipe(@RequestBody RecipeKey id) {
         try {
             recipeService.deleteRecipe(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
