@@ -1,5 +1,6 @@
 package ku.cs.restaurant.controller;
 
+import jakarta.validation.Valid;
 import ku.cs.restaurant.dto.user.SigninRequest;
 import ku.cs.restaurant.dto.user.SigninResponse;
 import ku.cs.restaurant.dto.user.SignupRequest;
@@ -21,7 +22,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest signupRequest) {
         try {
             User createdUser = userService.createUser(signupRequest);
             return new ResponseEntity<>("User created successfully: " + createdUser.getId(), HttpStatus.CREATED);

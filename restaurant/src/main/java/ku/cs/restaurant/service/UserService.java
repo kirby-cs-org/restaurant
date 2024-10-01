@@ -21,7 +21,7 @@ public class UserService {
         String username = user.getUsername();
         String phone = user.getPhone();
         String password = user.getPassword();
-        String role = user.getRole();
+        String role = (user.getRole() != null && !user.getRole().isEmpty()) ? user.getRole() : "CUSTOMER";
 
         String encodedPassword = passwordEncoder.encode(password);
 

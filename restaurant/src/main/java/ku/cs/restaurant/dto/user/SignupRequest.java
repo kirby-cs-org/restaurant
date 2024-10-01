@@ -10,8 +10,8 @@ public class SignupRequest {
     @NotBlank
     private String username;
 
-    @Size(min = 8, max = 20, message = "Password must be at least 8 characters long")
     @NotBlank
+    @Size(min = 8, max = 20, message = "Password must be at least 8 characters long")
     private String password;
 
     @NotBlank
@@ -24,3 +24,4 @@ public class SignupRequest {
     @NotBlank
     private String role;
 }
+
