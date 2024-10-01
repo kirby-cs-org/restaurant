@@ -21,7 +21,6 @@ public class SignupRequest {
     @Pattern(regexp = "\\d+", message = "Phone number must only contain digits")
     private String phone;
 
-    @NotBlank
     private String role;
 }
 
