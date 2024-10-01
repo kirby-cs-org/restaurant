@@ -28,21 +28,21 @@ public class JwtUtils {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername()) // set username as the token subject
-                .setIssuedAt(new Date()) // token issue time
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // set token expiration
-                .signWith(key(), SignatureAlgorithm.HS256) // sign the token with the secret key
+                .setSubject(userPrincipal.getUsername()) // Set username as the token subject
+                .setIssuedAt(new Date()) // Token issue time
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Set token expiration
+                .signWith(key(), SignatureAlgorithm.HS256) // Sign the token with the secret key
                 .compact();
     }
 
     // Parse JWT token to extract the username
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key()) // set signing key for validation
+                .setSigningKey(key()) // Set signing key for validation
                 .build()
-                .parseClaimsJws(token) // parse token claims
+                .parseClaimsJws(token) // Parse token claims
                 .getBody()
-                .getSubject(); // extract subject (username)
+                .getSubject(); // Extract subject (username)
     }
 
     // Validate JWT token and check its signature
@@ -65,6 +65,13 @@ public class JwtUtils {
 
     // Helper method to get the signing key from the secret
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+
+        // Check if the key length is sufficient
+        if (keyBytes.length < 32) { // 256 bits = 32 bytes
+            throw new IllegalArgumentException("JWT secret key must be at least 256 bits (32 bytes) long.");
+        }
+
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

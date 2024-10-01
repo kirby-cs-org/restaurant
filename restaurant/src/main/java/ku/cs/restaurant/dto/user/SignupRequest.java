@@ -20,4 +20,7 @@ public class SignupRequest {
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 characters long")
     @Pattern(regexp = "\\d+", message = "Phone number must only contain digits")
     private String phone;
+
+    @NotBlank
+    private String role;
 }

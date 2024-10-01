@@ -1,6 +1,5 @@
 package ku.cs.restaurant.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import ku.cs.restaurant.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,32 +7,30 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Data
 public class UserDetailsImpl implements UserDetails {
-    @Serial
-    private static final long serialVersionUID = 1L;
     private UUID id;
     private String username;
-    @JsonIgnore
-    private String phone;
     private String password;
+    private String phone;
+    private String role;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole()));
+        authorities.add(new SimpleGrantedAuthority(user.getRole())); // Ensures the role is properly added as a granted authority
 
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
+                user.getPassword(),  // Fixed the order of parameters
                 user.getPhone(),
-                user.getPassword(),
-                authorities
+                user.getRole(),
+                authorities  // Pass the authorities list directly
         );
     }
 
