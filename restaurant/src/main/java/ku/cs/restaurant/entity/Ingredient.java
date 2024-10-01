@@ -1,6 +1,7 @@
 package ku.cs.restaurant.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -35,5 +36,6 @@ public class Ingredient {
     private Date expireDate;
 
     @OneToMany(mappedBy = "ingredient")
+    @JsonIgnore
     private List<Recipe> recipes = new ArrayList<>();
 }

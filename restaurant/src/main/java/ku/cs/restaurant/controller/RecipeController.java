@@ -5,6 +5,7 @@ import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
 import ku.cs.restaurant.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,17 @@ public class RecipeController {
     // Create a new recipe
     @PostMapping("/recipe")
     public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
+        if (recipe == null || recipe.getId() == null || recipe.getIngredient() == null || recipe.getFood() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         try {
             Recipe createdRecipe = recipeService.createRecipe(recipe);
             return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

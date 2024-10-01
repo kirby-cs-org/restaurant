@@ -1,5 +1,6 @@
 package ku.cs.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -32,6 +33,7 @@ public class Food {
     private Status status;
 
     @OneToMany(mappedBy = "food")
+    @JsonIgnore
     private List<Recipe> recipes = new ArrayList<>();
 }
 
