@@ -1,6 +1,7 @@
 package ku.cs.restaurant.config;
 
 import ku.cs.restaurant.utils.AuthEntryPointJwt;
+import ku.cs.restaurant.utils.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -54,12 +56,23 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Use the custom CORS configuration
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/**").permitAll() // Allow all requests
-                );
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/ingredient").hasAnyAuthority( "ADMIN", "EMPLOYEE") // Allow specific roles to access /ingredient
+                        .anyRequest().permitAll() // Allow all other requests
+                )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(unauthorizedHandler) // Use AuthEntryPointJwt
+                )
+                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class); // Register AuthTokenFilter
 
         return http.build();
     }
+
+    @Bean
+    public AuthTokenFilter authTokenFilter() {
+        return new AuthTokenFilter();
+    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
