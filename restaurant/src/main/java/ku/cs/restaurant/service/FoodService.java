@@ -2,8 +2,7 @@ package ku.cs.restaurant.service;
 
 import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
-import ku.cs.restaurant.repository.FoodRepository; // Assuming you have a repository
-import ku.cs.restaurant.repository.RecipeRepository;
+import ku.cs.restaurant.repository.FoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

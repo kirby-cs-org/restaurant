@@ -5,7 +5,6 @@ import ku.cs.restaurant.dto.user.SigninRequest;
 import ku.cs.restaurant.dto.user.SigninResponse;
 import ku.cs.restaurant.dto.user.SignupRequest;
 import ku.cs.restaurant.dto.user.SignupResponse;
-import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.exception.UserRegistrationException;
 import ku.cs.restaurant.service.AuthService;
 import ku.cs.restaurant.service.UserService;

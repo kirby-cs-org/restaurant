@@ -2,7 +2,6 @@ package ku.cs.restaurant.service;
 
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
-import ku.cs.restaurant.repository.FoodRepository;
 import ku.cs.restaurant.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,6 @@ package ku.cs.restaurant.service;
 import ku.cs.restaurant.dto.user.SignupRequest;
 import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.entity.User;
-import ku.cs.restaurant.exception.UserRegistrationException;
 import ku.cs.restaurant.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
