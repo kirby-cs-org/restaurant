@@ -53,16 +53,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Use the custom CORS configuration
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/ingredient").hasAnyAuthority( "ADMIN", "EMPLOYEE") // Allow specific roles to access /ingredient
-                        .anyRequest().permitAll() // Allow all other requests
+                        .requestMatchers("/ingredient").hasAnyAuthority( "CUSTOMER","ADMIN", "EMPLOYEE")
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(unauthorizedHandler) // Use AuthEntryPointJwt
+                        exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
                 )
-                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class); // Register AuthTokenFilter
+                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

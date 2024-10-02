@@ -1,14 +1,18 @@
 package ku.cs.restaurant.service;
 
 import ku.cs.restaurant.dto.user.SignupRequest;
+import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.exception.UserRegistrationException;
 import ku.cs.restaurant.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -18,7 +22,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User createUser(SignupRequest user) {
+    public ResponseEntity<SignupResponse> createUser(SignupRequest user) {
+        SignupResponse signupResponse = new SignupResponse();
+        Optional<User> existedUser = userRepository.findByUsername(user.getUsername());
+
+        if (existedUser.isPresent()) {
+            signupResponse.setMessage("Username already exists");
+            return new ResponseEntity<>(signupResponse, HttpStatus.CONFLICT);
+        }
+
         String username = user.getUsername();
         String phone = user.getPhone();
         String password = user.getPassword();
@@ -26,7 +38,8 @@ public class UserService {
         String role = (user.getRole() != null && !user.getRole().isEmpty()) ? user.getRole() : "CUSTOMER";
 
         if (!password.equals(confirmPassword)) {
-            throw new UserRegistrationException("Passwords do not match");
+            signupResponse.setMessage("Passwords do not match");
+            return new ResponseEntity<>(signupResponse, HttpStatus.BAD_REQUEST);
         }
 
         String encodedPassword = passwordEncoder.encode(password);
@@ -37,7 +50,10 @@ public class UserService {
         newUser.setPassword(encodedPassword);
         newUser.setRole(role);
 
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+
+        signupResponse.setMessage("User created");
+        return new ResponseEntity<>(signupResponse, HttpStatus.CREATED);
     }
 
     public List<User> getAllCustomers() {
