@@ -3,7 +3,6 @@ package ku.cs.restaurant.service;
 import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.repository.IngredientRepository;
 import ku.cs.restaurant.entity.Status;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +11,11 @@ import java.util.UUID;
 
 @Service
 public class IngredientService {
-    @Autowired
-    private IngredientRepository repository;
+    private final IngredientRepository repository;
+
+    public IngredientService(IngredientRepository repository) {
+        this.repository = repository;
+    }
 
     // Create a new ingredient
     public Ingredient createIngredient(Ingredient ingredient) {
@@ -51,7 +53,6 @@ public class IngredientService {
         });
         return optionalIngredient; // Return the updated ingredient or empty if not found
     }
-
 
     // Update ingredient status
     public Optional<Ingredient> updateStatus(UUID id, Status newStatus) {

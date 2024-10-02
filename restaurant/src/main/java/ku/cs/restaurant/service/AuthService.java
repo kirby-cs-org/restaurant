@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
-    ResponseEntity<SigninResponse> signIn(SigninRequest SigninRequest);
+    ResponseEntity<SigninResponse> signIn(SigninRequest signinRequest);
 }

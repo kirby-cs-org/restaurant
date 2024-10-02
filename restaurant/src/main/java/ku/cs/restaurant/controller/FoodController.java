@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.service.FoodService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +19,11 @@ import java.util.List;
 
 @RestController
 public class FoodController {
-    @Autowired
-    private FoodService service;
+    private final FoodService service;
+
+    public FoodController(FoodService service) {
+        this.service = service;
+    }
 
     // สร้างเมนูใหม่
     @PostMapping("/food")
@@ -38,14 +40,14 @@ public class FoodController {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        String FOLDER_PATH = "src/main/resources/images";
-        File dir = new File(FOLDER_PATH);
+        String folderPath = "src/main/resources/images";
+        File dir = new File(folderPath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path path = Paths.get(FOLDER_PATH, fileName);
+        Path path = Paths.get(folderPath, fileName);
         Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
         return path.toString();

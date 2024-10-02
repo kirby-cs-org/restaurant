@@ -8,7 +8,6 @@ import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.exception.UserRegistrationException;
 import ku.cs.restaurant.service.AuthService;
 import ku.cs.restaurant.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,16 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController {
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private UserService userService;
+    private final AuthService authService;
+    private final UserService userService;
+
+    public AuthController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
+    }
 
     @PostMapping("/auth/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
         try {
-            ResponseEntity<SignupResponse> createdUser = userService.createUser(signupRequest);
-            return createdUser;
+            return userService.createUser(signupRequest);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

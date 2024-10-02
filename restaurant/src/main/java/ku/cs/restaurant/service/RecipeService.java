@@ -3,7 +3,6 @@ package ku.cs.restaurant.service;
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
 import ku.cs.restaurant.repository.RecipeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +10,11 @@ import java.util.Optional;
 
 @Service
 public class RecipeService {
+    private final RecipeRepository recipeRepository;
 
-    @Autowired
-    private RecipeRepository recipeRepository;
+    public RecipeService(RecipeRepository recipeRepository) {
+        this.recipeRepository = recipeRepository;
+    }
 
     public Recipe createRecipe(Recipe recipe) {
         return recipeRepository.save(recipe);

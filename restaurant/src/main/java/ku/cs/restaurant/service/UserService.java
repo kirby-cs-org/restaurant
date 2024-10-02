@@ -4,7 +4,6 @@ import ku.cs.restaurant.dto.user.SignupRequest;
 import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +14,13 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public ResponseEntity<SignupResponse> createUser(SignupRequest user) {
         SignupResponse signupResponse = new SignupResponse();

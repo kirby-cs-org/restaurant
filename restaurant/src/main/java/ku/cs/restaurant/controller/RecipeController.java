@@ -4,7 +4,6 @@ import ku.cs.restaurant.dto.recipe.UpdateQtyRequest;
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
 import ku.cs.restaurant.service.RecipeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +14,11 @@ import java.util.Optional;
 
 @RestController
 public class RecipeController {
+    private final RecipeService recipeService;
 
-    @Autowired
-    private RecipeService recipeService;
+    public RecipeController(RecipeService recipeService) {
+        this.recipeService = recipeService;
+    }
 
     // Create a new recipe
     @PostMapping("/recipe")

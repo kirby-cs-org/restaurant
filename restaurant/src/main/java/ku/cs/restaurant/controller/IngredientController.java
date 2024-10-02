@@ -5,7 +5,6 @@ import ku.cs.restaurant.dto.ingredient.UpdateStatusRequest;
 import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.service.IngredientService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,11 @@ import java.util.UUID;
 
 @RestController
 public class IngredientController {
-    @Autowired
-    private IngredientService service;
+    private final IngredientService service;
+
+    public IngredientController(IngredientService service) {
+        this.service = service;
+    }
 
     // Create a new ingredient
     @PostMapping("/ingredient")

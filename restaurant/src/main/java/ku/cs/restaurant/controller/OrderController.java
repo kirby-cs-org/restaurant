@@ -4,7 +4,6 @@ import ku.cs.restaurant.dto.order.UpdateStatusRequest;
 import ku.cs.restaurant.entity.Orders;
 import ku.cs.restaurant.entity.OrderStatus;
 import ku.cs.restaurant.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,11 @@ import java.util.Optional;
 
 @RestController
 public class OrderController {
-    @Autowired
-    private OrderService service;
+    private final OrderService service;
+
+    public OrderController(OrderService service) {
+        this.service = service;
+    }
 
     // สร้าง
     @PostMapping("/order")
@@ -27,6 +29,7 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     // ดูทั้งหมด
     @GetMapping("/order")
     public ResponseEntity<List<Orders>> getAllOrders() {
@@ -37,6 +40,7 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     // ดูตามสถานะ
     @GetMapping("/order/status")
     public ResponseEntity<List<Orders>> getOrdersByStatus(@RequestBody OrderStatus status) {
@@ -47,6 +51,7 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     // อัพเดทสถานะ
     @PatchMapping("/order")
     public ResponseEntity<Optional<Orders>> updateOrderStatusById(@RequestBody UpdateStatusRequest request) {

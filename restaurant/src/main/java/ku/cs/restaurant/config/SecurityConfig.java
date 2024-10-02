@@ -2,7 +2,7 @@ package ku.cs.restaurant.config;
 
 import ku.cs.restaurant.utils.AuthEntryPointJwt;
 import ku.cs.restaurant.utils.AuthTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import ku.cs.restaurant.utils.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +20,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    public SecurityConfig(UserDetailsService userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -51,9 +53,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtils jwtUtils) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // disable CSRF protection for API that using JWT
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/ingredient").hasAnyAuthority( "CUSTOMER","ADMIN", "EMPLOYEE")
@@ -62,24 +64,23 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
                 )
-                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authTokenFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter();
+    public AuthTokenFilter authTokenFilter(JwtUtils jwtUtils) {
+        return new AuthTokenFilter(userDetailsService, jwtUtils);
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5174, http://localhost:5173")); // Allow requests from this origin
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Allowed methods
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With")); // Allowed headers
-        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Expose certain headers to the client
+        configuration.setAllowedOrigins(List.of("http://localhost:5174, http://localhost:5173")); // Allow requests from this origin
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH")); // Allowed methods
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Allowed headers
+        configuration.setExposedHeaders(List.of("Authorization")); // Expose certain headers to the client
         configuration.setAllowCredentials(true); // Allow credentials
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

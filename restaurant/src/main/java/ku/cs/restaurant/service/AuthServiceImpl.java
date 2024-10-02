@@ -5,7 +5,6 @@ import ku.cs.restaurant.dto.user.SigninResponse;
 import ku.cs.restaurant.utils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +15,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+    private static final Logger tokenLogger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
     public ResponseEntity<SigninResponse> signIn(SigninRequest signinRequest) {
@@ -45,10 +46,10 @@ public class AuthServiceImpl implements AuthService {
             signinResponse.setPhone(userDetails.getPhone());
             signinResponse.setRole(userDetails.getRole());
 
-            logger.info("User {} signed in successfully", userDetails.getUsername());
+            tokenLogger.info("User {} signed in successfully", userDetails.getUsername());
             return ResponseEntity.ok(signinResponse);
         } catch (Exception e) {
-            logger.error("Failed to sign in user {}: {}", signinRequest.getUsername(), e.getMessage());
+            tokenLogger.error("Failed to sign in user {}: {}", signinRequest.getUsername(), e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }

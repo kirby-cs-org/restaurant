@@ -22,12 +22,12 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole())); // Ensures the role is properly added as a granted authority
+        authorities.add(new SimpleGrantedAuthority(user.getRole()));
 
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
-                user.getPassword(),  // Fixed the order of parameters
+                user.getPassword(),
                 user.getPhone(),
                 user.getRole(),
                 authorities  // Pass the authorities list directly
@@ -57,5 +57,10 @@ public class UserDetailsImpl implements UserDetails {
             return false;
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

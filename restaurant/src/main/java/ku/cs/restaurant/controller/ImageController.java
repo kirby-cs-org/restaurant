@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ImageController {
-
     private final ResourceLoader resourceLoader;
 
     public ImageController(ResourceLoader resourceLoader) {
@@ -21,7 +20,6 @@ public class ImageController {
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
-            // Load the image from the resources directory
             Resource resource = resourceLoader.getResource("classpath:Images/" + filename);
             if (!resource.exists()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
