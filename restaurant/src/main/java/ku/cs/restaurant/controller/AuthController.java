@@ -22,12 +22,12 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<User> signup(@Valid @RequestBody SignupRequest signupRequest) {
         try {
             User createdUser = userService.createUser(signupRequest);
-            return new ResponseEntity<>("User created successfully: " + createdUser.getId(), HttpStatus.CREATED);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
