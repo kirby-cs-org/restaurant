@@ -1,9 +1,11 @@
 <template>
-  <main class="flex w-full h-screen bg-[url('../assets/food.png')]">
+  <main
+    class="flex w-full h-screen bg-[url('../assets/bg2.png')] bg-no-repeat bg-cover"
+  >
     <div
-      class="flex justify-center items-center w-full mx-auto bg-white max-w-[90%] lg:max-w-[55%] md:max-w-[75%] h-full fixed right-0"
+      class="flex justify-center items-center w-full mx-auto bg-white max-w-[100%] lg:max-w-[55%] md:max-w-[75%] h-full fixed right-0"
     >
-      <div class="flex flex-col gap-8 p-8">
+      <form @submit.prevent="register" class="flex flex-col gap-8 p-8 w-[80%]">
         <span class="font-extrabold text-3xl">Get Started</span>
         <div>
           <span class="text-lg">Already have an account? </span>
@@ -14,33 +16,32 @@
           type="text"
           placeholder="Username"
           class="input"
+          required
         />
         <input
           v-model="password"
           type="password"
           placeholder="Password"
           class="input"
+          required
         />
         <input
           v-model="confirmPassword"
           type="password"
           placeholder="Confirm Password"
           class="input"
+          required
         />
         <input
           v-model="phoneNumber"
           type="text"
           placeholder="Phone Number"
           class="input"
+          required
         />
-        <button
-          @click="register"
-          class="bg-[#ffca40] rounded-lg h-[4rem] font-bold text-xl"
-        >
-          Register
-        </button>
+        <button type="submit" class="auth-button">Register</button>
         <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
-      </div>
+      </form>
     </div>
   </main>
 </template>
@@ -48,6 +49,9 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router"; // Import useRouter
+
+const router = useRouter(); // Create a router instance
 
 const username = ref("");
 const password = ref("");
@@ -56,7 +60,6 @@ const phoneNumber = ref("");
 const errorMessage = ref("");
 
 const register = async () => {
-  // Reset the error message
   errorMessage.value = "";
 
   // Check if passwords match
@@ -72,6 +75,9 @@ const register = async () => {
       confirmPassword: confirmPassword.value,
       phone: phoneNumber.value,
     });
+
+    // Redirect to sign-in page upon successful registration
+    router.push("/signin");
 
     console.log("Registration successful:", response.data);
   } catch (error) {
