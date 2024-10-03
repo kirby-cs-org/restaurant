@@ -3,10 +3,15 @@
 @tailwind utilities;
 
 .input {
-  @apply w-[4/5] h-[4rem] rounded-lg border-none bg-gray-200 pl-8 text-base;
+    @apply w-[4/5] h-[4rem] rounded-lg border-none bg-gray-200 pl-8 text-base;
 }
 
 .auth-button {
-  @apply bg-[#ffca40] rounded-lg h-[4rem] font-bold text-xl w-[3/4];
+    @apply bg-[#ffca40] rounded-lg h-[4rem] font-bold text-xl w-[3/4];
 }
 
+#app {
+    width: screen;
+    margin: 0;
+    padding: 0;
+}
