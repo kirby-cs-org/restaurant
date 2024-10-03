@@ -11,11 +11,25 @@ import java.util.List;
 public class OrderLineService {
     private OrderLineRepository orderLineRepository;
 
-    public OrderLine createdOrderline(OrderLine orderLine) {
-        return orderLineRepository.save(orderLine);
+    public OrderLineService(OrderLineRepository orderLineRepository) {
+        this.orderLineRepository = orderLineRepository;
     }
 
     public List<OrderLine> findOrderLine() {
         return orderLineRepository.findAll();
+    }
+
+    public OrderLine createOrderLine(OrderLine orderLine) {
+        return orderLineRepository.save(orderLine);
+    }
+
+    public OrderLine updateQuantity(OrderLine orderLine) {
+        orderLine.setO_qty(orderLine.getO_qty());
+        return orderLineRepository.save(orderLine);
+    }
+
+    public OrderLine updateTotal(OrderLine orderLine) {
+        orderLine.setTotal_each(orderLine.getTotal_each());
+        return orderLineRepository.save(orderLine);
     }
 }
