@@ -53,10 +53,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router' // Import useRouter
+import { useRouter } from 'vue-router'
+import authApi from '@/api/authApi'
 
-const router = useRouter() // Create a router instance
+const router = useRouter()
 
 const username = ref('')
 const password = ref('')
@@ -67,26 +67,27 @@ const errorMessage = ref('')
 const register = async () => {
     errorMessage.value = ''
 
-    // Check if passwords match
     if (password.value !== confirmPassword.value) {
         errorMessage.value = 'Passwords do not match.'
         return
     }
 
     try {
-        const response = await axios.post('http://localhost:8088/auth/signup', {
+        const response = await authApi.signUp({
             username: username.value,
             password: password.value,
             confirmPassword: confirmPassword.value,
             phone: phoneNumber.value,
         })
 
-        // Redirect to sign-in page upon successful registration
         router.push('/signin')
 
         console.log('Registration successful:', response.data)
     } catch (error) {
-        console.error('Registration failed:', error.response.data)
+        console.error(
+            'Registration failed:',
+            error.response?.data || error.message
+        )
         errorMessage.value = 'Registration failed. Please try again.'
     }
 }

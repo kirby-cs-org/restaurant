@@ -37,6 +37,7 @@
         <div class="mt-32">
             <span
                 class="px-16 py-2 bg-gray-200 rounded-md cursor-pointer shadow-md"
+                @click="logout"
                 >Logout</span
             >
         </div>
@@ -44,6 +45,7 @@
 </template>
 
 <script setup>
+import router from '@/router'
 import { ref } from 'vue'
 
 const selectedItem = ref(null)
@@ -59,6 +61,12 @@ const menuItems = [
 
 const selectItem = (index) => {
     selectedItem.value = index
+}
+
+const logout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('carts')
+    router.push('/signin')
 }
 </script>
 

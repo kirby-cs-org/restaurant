@@ -1,6 +1,5 @@
-import router from '@/router'
-import axios from 'axios'
 import { defineStore } from 'pinia'
+import foodApi from '@/api/foodApi'
 
 export const foodsStore = defineStore('foods', {
     state: () => ({
@@ -11,8 +10,7 @@ export const foodsStore = defineStore('foods', {
     actions: {
         async fetchFoods() {
             try {
-                const res = await axios.get('http://localhost:8088/food')
-                console.log(res.data)
+                const res = await foodApi.getFoods()
                 this.foods = res.data
             } catch (error) {
                 console.error('Error fetching foods:', error)

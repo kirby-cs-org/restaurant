@@ -43,27 +43,27 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import authApi from '@/api/authApi'
 
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
-const router = useRouter() // Import Vue Router
+const router = useRouter()
 
 const login = async () => {
     errorMessage.value = ''
 
     try {
-        const response = await axios.post('http://localhost:8088/auth/signin', {
+        const response = await authApi.signIn({
             username: username.value,
             password: password.value,
         })
 
         const token = response.data.token // jwt token
         if (token) {
-            localStorage.setItem('token', token)
+            localStorage.setItem('token', token) // Save token in localStorage
 
-            router.push('/food')
+            router.push('/food') // Redirect to food page
         }
     } catch (error) {
         console.error('Login failed:', error.response?.data || error.message)

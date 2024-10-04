@@ -26,7 +26,7 @@ public class FoodController {
     }
 
     // สร้างเมนูใหม่
-    @PostMapping("/food")
+    @PostMapping("/foods")
     public ResponseEntity<Food> createMenu(@RequestPart("food") Food food, @RequestPart("image") MultipartFile image) {
         try {
             String imagePath = saveImage(image);
@@ -54,7 +54,7 @@ public class FoodController {
     }
 
     // ดูตามสถานะ
-    @GetMapping("/food/status/{status}")
+    @GetMapping("/foods/status/{status}")
     public ResponseEntity<List<Food>> getByStatus(@PathVariable String status) {
         try {
             Status productStatus = Status.valueOf(status.toUpperCase());
@@ -66,7 +66,7 @@ public class FoodController {
     }
 
     // ดูทั้งหมด
-    @GetMapping("/food")
+    @GetMapping("/foods")
     public ResponseEntity<List<Food>> getAll() {
         List<Food> foods = service.getAllFoods();
         String imageBaseUrl = "http://localhost:8088/images/";
@@ -83,7 +83,7 @@ public class FoodController {
     }
 
     // ลบอาหาร
-    @DeleteMapping("/food")
+    @DeleteMapping("/foods")
     public ResponseEntity<Void> deleteMenu(@RequestBody FoodDeleteDto deleteDto) {
         try {
             service.deleteFoodById(deleteDto.getId());
