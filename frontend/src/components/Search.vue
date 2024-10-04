@@ -5,6 +5,8 @@
         >
             <fa icon="search" />
             <input
+                v-model="searchTerm"
+                @input="emitSearch"
                 class="w-full h-12 bg-gray-200 px-4 outline-none rounded-lg"
                 placeholder="Search..."
             />
@@ -24,3 +26,17 @@
         </span>
     </section>
 </template>
+
+<script setup>
+import { ref, defineEmits } from 'vue'
+
+const emit = defineEmits()
+
+const searchTerm = ref('')
+
+// Emit the search term whenever it changes
+const emitSearch = () => {
+    emit('update-search', searchTerm.value)
+    console.log(searchTerm.value)
+}
+</script>

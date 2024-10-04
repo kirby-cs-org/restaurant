@@ -44,9 +44,8 @@
 <script setup>
 import { ref } from 'vue'
 
-const selectedItem = ref(null) // To track the selected item
+const selectedItem = ref(null)
 
-// Sample menu items with icons and paths
 const menuItems = [
     { label: 'Menu', icon: 'bars', path: '/food' },
     { label: 'Order', icon: 'book', path: '/order' },
@@ -56,7 +55,6 @@ const menuItems = [
     { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
 ]
 
-// Function to set the selected item
 const selectItem = (index) => {
     selectedItem.value = index
 }

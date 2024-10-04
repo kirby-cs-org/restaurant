@@ -1,15 +1,23 @@
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import Card from '@/components/Card.vue'
 import Search from '@/components/Search.vue'
 import { foodsStore } from '@/stores/cart'
 
 const foodStore = foodsStore()
+const searchQuery = ref('')
 
 const fetchFoods = async () => {
     await foodStore.fetchFoods()
 }
+
+const filteredFoods = computed(() => {
+    if (!searchQuery.value) return foodStore.foods
+    return foodStore.foods.filter((food) =>
+        food.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+})
 
 onMounted(() => {
     fetchFoods()
@@ -26,7 +34,7 @@ onMounted(() => {
         >
             <!-- search filter section  -->
             <section class="search">
-                <Search />
+                <Search @update-search="searchQuery = $event" />
             </section>
             <!-- Name section  -->
             <section class="w-full h-12">
@@ -35,7 +43,7 @@ onMounted(() => {
             <!-- food list section  -->
             <section class="foods">
                 <ul class="my_grid">
-                    <li v-for="food in foodStore.foods" :key="food.id">
+                    <li v-for="food in filteredFoods" :key="food.id">
                         <Card :foodsData="food" />
                     </li>
                 </ul>
