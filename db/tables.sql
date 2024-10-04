@@ -24,3 +24,4 @@ SELECT * FROM `transaction`;
 
 -- Select from `financial` Table
 SELECT * FROM `financial`;
+mysql

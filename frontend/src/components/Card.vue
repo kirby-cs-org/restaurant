@@ -24,6 +24,7 @@
 
 <script setup>
 import { foodsStore } from '@/stores/cart'
+import { defineProps } from 'vue'
 const props = defineProps({
     foodsData: {
         type: Object,
