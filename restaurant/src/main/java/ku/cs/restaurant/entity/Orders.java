@@ -29,4 +29,8 @@ public class Orders {
 
     @Column(name = "update_at")
     private LocalDateTime updateTimestamp = LocalDateTime.now();
+
+    @OneToOne
+    @JoinColumn(name = "b_id")
+    private Receipt receipt;
 }
