@@ -2,14 +2,31 @@
     <main class="w-full">
         <Sidebar class="fixed" />
         <div class="ml-[14rem] cart-view">
-            <h1>Your Cart</h1>
+            <div class="flex justify-between px-2 items-center">
+                <h1 class="font-bold text-lg">Your Cart</h1>
+                <button
+                    class="bg-yellow-300 px-6 py-2 rounded-md hover:shadow-md duration-200"
+                >
+                    Order
+                </button>
+            </div>
             <div v-if="cart.length === 0">
                 <p>Your cart is empty.</p>
             </div>
             <ul v-else>
-                <li v-for="item in cart" :key="item.food.id" class="cart-item">
+                <li
+                    v-for="item in cart"
+                    :key="item.food.id"
+                    class="cart-item shadow-md"
+                >
+                    <div class="mr-4">
+                        <img
+                            class="w-32 h-32 rounded-md"
+                            :src="item.food.imagePath"
+                        />
+                    </div>
                     <div class="item-details">
-                        <h3>{{ item.food.name }}</h3>
+                        <h3 class="font-bold">{{ item.food.name }}</h3>
                         <p>Price: {{ item.food.price }} ฿</p>
                         <p>Quantity: {{ item.quantity }}</p>
                     </div>
