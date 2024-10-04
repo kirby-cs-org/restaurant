@@ -1,7 +1,6 @@
 package ku.cs.restaurant.utils;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import ku.cs.restaurant.service.UserDetailsImpl;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -28,9 +28,14 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
+        // Retrieve roles and convert to a List if necessary
+        List<String> roles = userPrincipal.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername()) // Set username as the token subject
-                .claim("roles", userPrincipal.getRole())
+                .claim("roles", roles) // Store roles in the token
                 .setIssuedAt(new Date()) // Token issue time
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Set token expiration
                 .signWith(key(), SignatureAlgorithm.HS256) // Sign the token with the secret key
@@ -47,14 +52,18 @@ public class JwtUtils {
                 .getSubject(); // Extract subject (username)
     }
 
-    public List<String> getRolesFromJwtToken(String token) {
-        // Parse the JWT and extract the roles as a List<String>
+    // Get subject from JWT token
+    public String getSubjectFromToken(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    // Get claims from the JWT token
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key()) // Set signing key for validation
+                .setSigningKey(key())
                 .build()
-                .parseClaimsJws(token) // Parse token claims
-                .getBody()
-                .get("roles", List.class); // Retrieve roles as List
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     // Validate JWT token and check its signature
@@ -77,7 +86,7 @@ public class JwtUtils {
 
     // Helper method to get the signing key from the secret
     private Key key() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        byte[] keyBytes = jwtSecret.getBytes();
 
         // Check if the key length is sufficient
         if (keyBytes.length < 32) { // 256 bits = 32 bytes
@@ -85,5 +94,11 @@ public class JwtUtils {
         }
 
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // Get roles from JWT token
+    public List<String> getRolesFromToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("roles", List.class); // Extract the roles claim
     }
 }

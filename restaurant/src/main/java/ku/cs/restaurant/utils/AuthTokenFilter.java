@@ -33,44 +33,68 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String jwt = parseJwt(request);
+
+        // allow signin signup
+        if (request.getRequestURI().equals("/auth/signin") || request.getRequestURI().equals("/auth/signup") || request.getRequestURI().contains("/images")) {
+            filterChain.doFilter(request, response); // Proceed without JWT validation
+            return;
+        }
+
+        // ตรวจสอบว่า JWT มีอยู่และถูกต้องหรือไม่
+        if (jwt == null || !jwtUtils.validateJwtToken(jwt)) {
+            tokenLogger.warn("JWT is missing or invalid.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return; // หาก JWT ไม่มีหรือไม่ถูกต้อง ให้หยุดการประมวลผล
+        }
+
+
+
         try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // Extract roles from JWT claims
-                List<String> roles = jwtUtils.getRolesFromJwtToken(jwt);
-                boolean hasRequiredRole = false;
+            // ดึงบทบาทจาก JWT claims
+            List<String> roles = jwtUtils.getRolesFromToken(jwt);
+            boolean hasRequiredRole = false;
 
-                // Determine if the user has a valid role for the request
-                String requestUri = request.getRequestURI();
+            tokenLogger.info("User {} has roles: {}", username, roles);
+            System.out.println("User " + username + " has roles: " + roles);
 
-                // Define required roles based on request URI
-                if (requestUri.matches("/foods|/images|/order|/order_line|/recipe|/auth")) {
-                    hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN") || roles.contains("EMPLOYEE");
-                } else if (requestUri.matches("/ingredient|/user")) {
-                    hasRequiredRole = roles.contains("ADMIN") || roles.contains("EMPLOYEE");
-                }
+            // ตรวจสอบ URI ของการร้องขอ
+            String requestUri = request.getRequestURI();
 
-                if (hasRequiredRole) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null, // Credentials are not required for JWT
-                                    userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    tokenLogger.warn("User {} does not have the required role for this request.", username);
-                }
+            // กำหนดบทบาทที่จำเป็นตาม URI ที่ร้องขอ
+            if (requestUri.matches("/foods|/order|/order_line|/recipe|/auth")) {
+                hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+            } else if (requestUri.equals("/ingredient")) {
+                hasRequiredRole = roles.contains("ADMIN");
+            } else if (requestUri.matches("/user")) {
+                hasRequiredRole = roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+            }
+
+            if (hasRequiredRole) {
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null, // Credentials are not required for JWT
+                                userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                tokenLogger.warn("User {} does not have the required role for this request.", username);
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+                return;
             }
         } catch (Exception e) {
             tokenLogger.error("Cannot set user authentication: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
+
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
