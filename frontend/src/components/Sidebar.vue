@@ -22,11 +22,13 @@
             >
                 <router-link
                     :to="item.path"
-                    class="flex items-center w-full gap-4 rounded-md px-2"
+                    class="flex items-center w-full rounded-md px-2"
                     exact-active-class="bg-yellow-300"
                 >
-                    <fa :icon="item.icon" />
-                    <span class="text-lg w-full px-4 py-1 rounded-md">
+                    <div class="w-12">
+                        <fa :icon="item.icon" />
+                    </div>
+                    <span class="text-lg w-full pr-4 py-1 rounded-md">
                         {{ item.label }}
                     </span>
                 </router-link>
