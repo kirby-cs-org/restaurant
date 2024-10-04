@@ -52,7 +52,6 @@ const total = computed(() => {
     )
 })
 
-// Watch for changes in localStorage and update the cart automatically
 watchEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('carts')) || []
     cart.value = storedCart

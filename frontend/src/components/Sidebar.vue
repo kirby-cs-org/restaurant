@@ -14,7 +14,7 @@
                 :key="index"
                 :class="[
                     'list',
-                    selectedItem === index
+                    selectedItem === index || $route.path === item.path
                         ? 'bg-yellow-300 flex justify-center'
                         : 'flex-start',
                 ]"
@@ -22,11 +22,13 @@
             >
                 <router-link
                     :to="item.path"
-                    class="flex items-center w-full gap-4"
-                    @click.native="selectItem(index)"
+                    class="flex items-center w-full gap-4 rounded-md px-2"
+                    exact-active-class="bg-yellow-300"
                 >
                     <fa :icon="item.icon" />
-                    <span class="text-lg">{{ item.label }}</span>
+                    <span class="text-lg w-full px-4 py-1 rounded-md">
+                        {{ item.label }}
+                    </span>
                 </router-link>
             </li>
         </ul>
@@ -62,7 +64,7 @@ const selectItem = (index) => {
 
 <style scoped>
 .list {
-    @apply flex justify-start items-center cursor-pointer px-8 py-2 rounded-md duration-200;
+    @apply flex justify-start items-center cursor-pointer rounded-md duration-200;
 }
 
 .list:hover {
