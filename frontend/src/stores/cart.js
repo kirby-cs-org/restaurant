@@ -5,7 +5,7 @@ import { defineStore } from 'pinia'
 export const foodsStore = defineStore('foods', {
     state: () => ({
         foods: [],
-        cart: [],
+        cart: JSON.parse(localStorage.getItem('carts')) || [],
     }),
 
     actions: {
@@ -30,7 +30,9 @@ export const foodsStore = defineStore('foods', {
                 // ถ้าอาหารไม่อยู่ในตะกร้า ให้เพิ่มรายการใหม่พร้อมจำนวน 1
                 this.cart.push({ food, quantity: 1 })
             }
+            localStorage.setItem('carts', JSON.stringify(this.cart))
             console.log('Updated cart:', this.cart)
+            console.log(localStorage.getItem('carts'))
         },
 
         removeFromCart(id) {
@@ -47,7 +49,8 @@ export const foodsStore = defineStore('foods', {
                 }
                 return true // เก็บไว้ในตะกร้า
             })
-            console.log('Updated cart:', this.cart)
+            localStorage.setItem('carts', JSON.stringify(this.cart))
+            console.log('Updated cart:', localStorage.getItem('carts'))
         },
     },
 })

@@ -28,23 +28,35 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { foodsStore } from '@/stores/cart'
 import Sidebar from '@/components/Sidebar.vue'
 
+const cart = ref(JSON.parse(localStorage.getItem('carts')) || [])
+
 const foodStore = foodsStore()
-const cart = foodStore.cart
 
 const removeFromCart = (id) => {
     // Check if the item quantity is greater than 0 before removing
-    const item = cart.find((item) => item.food.id === id)
+    const item = cart.value.find((item) => item.food.id === id)
     if (item && item.quantity > 0) {
-        foodStore.removeFromCart(id)
+        foodStore.removeFromCart(id) // Update store and localStorage
+        cart.value = JSON.parse(localStorage.getItem('carts')) || [] // Sync cart with localStorage
     }
 }
 
 const total = computed(() => {
-    return cart.reduce((sum, item) => sum + item.food.price * item.quantity, 0)
+    return cart.value.reduce(
+        (sum, item) => sum + item.food.price * item.quantity,
+        0
+    )
+})
+
+// Watch for changes in localStorage and update the cart automatically
+watchEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('carts')) || []
+    cart.value = storedCart
+    console.log('Cart updated:', cart.value)
 })
 </script>
 
