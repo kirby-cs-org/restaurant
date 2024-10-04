@@ -2,38 +2,40 @@
     <aside
         class="flex flex-col justify-between items-center h-screen w-56 py-4 border-r-2"
     >
-        <div class="flex">
-            <img src="../assets/food-icon.png" width="42px" />
-            <span class="flex items-center font-bold text-lg"
-                >&nbsp;SuperDuperPOS</span
-            >
-        </div>
-        <ul class="flex flex-col gap-8">
-            <li
-                v-for="(item, index) in menuItems"
-                :key="index"
-                :class="[
-                    'list',
-                    selectedItem === index || $route.path === item.path
-                        ? 'bg-yellow-300 flex justify-center'
-                        : 'flex-start',
-                ]"
-                @click="selectItem(index)"
-            >
-                <router-link
-                    :to="item.path"
-                    class="flex items-center w-full rounded-md px-2"
-                    exact-active-class="bg-yellow-300"
+        <div class="flex flex-col gap-12">
+            <div class="flex">
+                <img src="../assets/food-icon.png" width="42px" />
+                <span class="flex items-center font-bold text-lg"
+                    >&nbsp;SuperDuperPOS</span
                 >
-                    <div class="w-12">
-                        <fa :icon="item.icon" />
-                    </div>
-                    <span class="text-lg w-full pr-4 py-1 rounded-md">
-                        {{ item.label }}
-                    </span>
-                </router-link>
-            </li>
-        </ul>
+            </div>
+            <ul class="flex flex-col gap-8">
+                <li
+                    v-for="(item, index) in menuItems"
+                    :key="index"
+                    :class="[
+                        'list',
+                        selectedItem === index || $route.path === item.path
+                            ? 'bg-yellow-300 flex justify-center'
+                            : 'flex-start',
+                    ]"
+                    @click="selectItem(index)"
+                >
+                    <router-link
+                        :to="item.path"
+                        class="flex items-center w-full rounded-md px-2"
+                        exact-active-class="bg-yellow-300"
+                    >
+                        <div class="w-12">
+                            <fa :icon="item.icon" />
+                        </div>
+                        <span class="text-lg w-full pr-4 py-1 rounded-md">
+                            {{ item.label }}
+                        </span>
+                    </router-link>
+                </li>
+            </ul>
+        </div>
         <div class="mt-32">
             <span
                 class="px-16 py-2 bg-gray-200 rounded-md cursor-pointer shadow-md"
