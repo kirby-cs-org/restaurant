@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -36,19 +37,36 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
-
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null, // Credentials are not required for JWT
-                                userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Extract roles from JWT claims
+                List<String> roles = jwtUtils.getRolesFromJwtToken(jwt);
+                boolean hasRequiredRole = false;
+
+                // Determine if the user has a valid role for the request
+                String requestUri = request.getRequestURI();
+
+                // Define required roles based on request URI
+                if (requestUri.matches("/foods|/images|/order|/order_line|/recipe|/auth")) {
+                    hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+                } else if (requestUri.matches("/ingredient|/user")) {
+                    hasRequiredRole = roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+                }
+
+                if (hasRequiredRole) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null, // Credentials are not required for JWT
+                                    userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    tokenLogger.warn("User {} does not have the required role for this request.", username);
+                }
             }
         } catch (Exception e) {
-            tokenLogger.error("Cannot set user authentication: {}", e.getMessage()); // Provide better error context
+            tokenLogger.error("Cannot set user authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

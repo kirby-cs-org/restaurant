@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtils {
@@ -29,6 +30,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername()) // Set username as the token subject
+                .claim("roles", userPrincipal.getRole())
                 .setIssuedAt(new Date()) // Token issue time
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Set token expiration
                 .signWith(key(), SignatureAlgorithm.HS256) // Sign the token with the secret key
@@ -43,6 +45,16 @@ public class JwtUtils {
                 .parseClaimsJws(token) // Parse token claims
                 .getBody()
                 .getSubject(); // Extract subject (username)
+    }
+
+    public List<String> getRolesFromJwtToken(String token) {
+        // Parse the JWT and extract the roles as a List<String>
+        return Jwts.parserBuilder()
+                .setSigningKey(key()) // Set signing key for validation
+                .build()
+                .parseClaimsJws(token) // Parse token claims
+                .getBody()
+                .get("roles", List.class); // Retrieve roles as List
     }
 
     // Validate JWT token and check its signature

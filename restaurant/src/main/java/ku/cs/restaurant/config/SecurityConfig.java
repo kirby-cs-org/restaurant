@@ -55,11 +55,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtils jwtUtils) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // disable CSRF protection for API that using JWT
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection for APIs using JWT
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/ingredient").hasAnyAuthority( "CUSTOMER","ADMIN", "EMPLOYEE")
-                        .anyRequest().permitAll()
+                        .anyRequest().permitAll() // Allow all requests; role checks will happen in AuthTokenFilter
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
