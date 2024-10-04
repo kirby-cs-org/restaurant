@@ -69,7 +69,7 @@ public class FoodController {
     @GetMapping("/food")
     public ResponseEntity<List<Food>> getAll() {
         List<Food> foods = service.getAllFoods();
-        String imageBaseUrl = "http://localhost:8080/images/";
+        String imageBaseUrl = "http://localhost:8088/images/";
 
         for (Food food : foods) {
             String imagePath = food.getImagePath().replace("\\", "/");
