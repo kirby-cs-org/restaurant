@@ -1,6 +1,6 @@
 <template>
     <div
-        class="w-full h-screen bg-[url('../assets/bg2.png')] bg-no-repeat bg-auto flex justify-center items-center"
+        class="w-full h-screen bg-[url('../assets/bg2.png')] bg-no-repeat bg-cover flex justify-center items-center"
     >
         <div class="h-4/5 w-96 sm:w-3/5 md:w-3/6 bg-white rounded-lg">
             <form
