@@ -17,13 +17,16 @@ public class Orders {
     @Column(name = "o_id")
     private UUID id;
 
-    @Column(name = "o_qty")
-    private int qty;
+    @Column(name = "o_total")
+    private double total;
 
     @Column(name = "o_status")
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.PENDING;
 
-    @Column(name = "o_timestamp")
-    private LocalDateTime timestamp;
+    @Column(name = "created_at")
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+    @Column(name = "update_at")
+    private LocalDateTime updateTimestamp = LocalDateTime.now();
 }

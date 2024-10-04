@@ -1,5 +1,6 @@
 package ku.cs.restaurant.controller;
 
+import ku.cs.restaurant.dto.orderLine.CreateRequest;
 import ku.cs.restaurant.entity.OrderLine;
 import ku.cs.restaurant.service.OrderLineService;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,12 @@ public class OrderLineController {
     }
 
     @PostMapping("/order_line")
-    public ResponseEntity<OrderLine> createOrderLine(@RequestBody OrderLine orderLine) {
+    public ResponseEntity<OrderLine> createOrderLine(@RequestBody CreateRequest orderLine) {
         try {
             OrderLine orderLines = service.createOrderLine(orderLine);
-            return new ResponseEntity<>(orderLines, HttpStatus.OK);
+            return new ResponseEntity<>(orderLines, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -33,7 +34,7 @@ public class OrderLineController {
             List<OrderLine> orderLines = service.findOrderLine();
             return new ResponseEntity<>(orderLines, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -43,19 +44,8 @@ public class OrderLineController {
             OrderLine updatedOrderLine = service.updateQuantity(orderLine);
             return new ResponseEntity<>(updatedOrderLine, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PatchMapping("/order_line/total")
-    public ResponseEntity<OrderLine> updateTotal(@RequestBody OrderLine orderLine) {
-        try {
-            OrderLine updatedOrderLine = service.updateTotal(orderLine);
-            return new ResponseEntity<>(updatedOrderLine, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 }
 

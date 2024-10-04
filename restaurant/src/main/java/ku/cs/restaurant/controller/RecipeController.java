@@ -1,5 +1,6 @@
 package ku.cs.restaurant.controller;
 
+import ku.cs.restaurant.dto.recipe.CreateRequest;
 import ku.cs.restaurant.dto.recipe.UpdateQtyRequest;
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
@@ -22,11 +23,7 @@ public class RecipeController {
 
     // Create a new recipe
     @PostMapping("/recipe")
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
-        if (recipe == null || recipe.getId() == null || recipe.getIngredient() == null || recipe.getFood() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<Recipe> createRecipe(@RequestBody CreateRequest recipe) {
         try {
             Recipe createdRecipe = recipeService.createRecipe(recipe);
             return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);

@@ -17,6 +17,10 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
+    public Optional<Orders> findOrderById(UUID id) {
+        return orderRepository.findById(id);
+    }
+
     // สร้างออเดอร์ใหม่ 
     public Orders createOrder(Orders orders) {
         return orderRepository.save(orders);
