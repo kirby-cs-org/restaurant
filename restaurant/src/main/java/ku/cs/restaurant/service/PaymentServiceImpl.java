@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 .setCurrency("thb")
                                 .setUnitAmount((long) (order.getTotal() * 100)) // Ensure the total is in the smallest currency unit
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                        .setName("Zosh Food") // Capitalized product name
+                                        .setName("Food price") // Capitalized product name
                                         .build())
                                 .build())
                         .build())
