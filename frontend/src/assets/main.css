@@ -18,16 +18,17 @@
     font-family: 'Gilroy-Bold', 'Gill Sans', 'Gill Sans MT', Calibri,
         'Trebuchet MS', sans-serif;
     color: #2a3238;
+    font-weight: 500;
 }
 
 .foods-grid {
     display: grid;
     gap: 24px 4px;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 16.5rem));
 }
 
 .ingredients-grid {
     display: grid;
     gap: 24px 4px;
-    grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 16.5rem));
 }

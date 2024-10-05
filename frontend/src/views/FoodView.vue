@@ -46,7 +46,7 @@ onMounted(() => {
                 <span class="font-bold text-3xl">Menu</span>
             </section>
             <!-- food list section  -->
-            <section class="foods">
+            <section class="pb-12">
                 <ul class="foods-grid">
                     <li v-for="food in filteredFoods" :key="food.id">
                         <Card :foodsData="food" />

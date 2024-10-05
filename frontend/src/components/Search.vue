@@ -1,13 +1,13 @@
 <template>
-    <section class="w-full flex justify-between items-center">
+    <section class="w-full flex justify-between items-center opacity-80">
         <div
             class="flex bg-gray-200 w-96 items-center rounded-lg shadow-md pl-2"
         >
-            <fa icon="search" />
+            <fa class="px-2" icon="search" />
             <input
                 v-model="searchTerm"
                 @input="emitSearch"
-                class="w-full h-12 bg-gray-200 px-4 outline-none rounded-lg"
+                class="w-full h-12 bg-gray-200 px-2 outline-none rounded-lg"
                 placeholder="Search..."
             />
         </div>

@@ -40,14 +40,16 @@ onMounted(() => {
         >
             <Search @update-search="searchQuery = $event" />
             <div class="text-2xl font-bold">Ingredients</div>
-            <ul class="ingredients-grid">
-                <li
-                    v-for="ingredient in filteredIngredients"
-                    :key="ingredient.id"
-                >
-                    <IngredientCard :ingredientData="ingredient" />
-                </li>
-            </ul>
+            <section class="pb-12">
+                <ul class="ingredients-grid">
+                    <li
+                        v-for="ingredient in filteredIngredients"
+                        :key="ingredient.id"
+                    >
+                        <IngredientCard :ingredientData="ingredient" />
+                    </li>
+                </ul>
+            </section>
         </main>
     </div>
 </template>
