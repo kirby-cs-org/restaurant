@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${stripe.api.key}")
+    @Value("${stripe.api.key.test}")
     private String stripeSecretKey;
 
     @Override
@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         SessionCreateParams params = SessionCreateParams.builder()
-                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PROMPTPAY)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:5173/payment/success?id=" + order.getId())
                 .setCancelUrl("http://localhost:5173/fail")
