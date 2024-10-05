@@ -12,6 +12,10 @@ const orderApi = {
     createOrder(orderData) {
         return apiClient.post('/order', orderData)
     },
+
+    updateOrderStatus(orderStatus) {
+        return apiClient.patch('/order', orderStatus)
+    },
 }
 
 export default orderApi
