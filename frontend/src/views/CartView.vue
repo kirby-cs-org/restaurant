@@ -1,11 +1,12 @@
 <template>
     <main class="w-full">
         <Sidebar class="fixed" />
-        <div class="ml-[14rem] p-5 cart-view">
+        <div class="ml-[14rem] p-5">
             <div class="flex justify-between items-center">
                 <h1 class="font-bold text-lg">Your Cart</h1>
                 <button
                     class="bg-yellow-300 px-6 py-2 rounded-md hover:shadow-md duration-200"
+                    @click="createOrder"
                 >
                     Order
                 </button>
@@ -52,6 +53,7 @@
 import { ref, computed, watchEffect } from 'vue'
 import { foodsStore } from '@/stores/cart'
 import Sidebar from '@/components/Sidebar.vue'
+import orderApi from '@/api/orderApi'
 
 const cart = ref(JSON.parse(localStorage.getItem('carts')) || [])
 
@@ -77,10 +79,11 @@ watchEffect(() => {
     cart.value = storedCart
     console.log('Cart updated:', cart.value)
 })
-</script>
 
-<style scoped>
-.cart-view {
-    padding: 20px;
+const createOrder = async () => {
+    const orderData = JSON.stringify({ foods: foodStore.cart })
+    const { data } = await orderApi.createOrder(orderData)
+
+    window.open(data.paymentLink)
 }
-</style>
+</script>

@@ -8,8 +8,13 @@ import TransactionView from '@/views/TransactionView.vue'
 import ReceiptView from '@/views/ReceiptView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CartView from '@/views/CartView.vue'
+<<<<<<< HEAD
 import SuccessView from '@/views/SuccessView.vue'
 import CancelView from '@/views/CancelView.vue'
+=======
+import FailView from '@/views/FailView.vue'
+import SuccessView from '@/views/SuccessView.vue'
+>>>>>>> 0b34dc8d40c0bb50447a0b4b5396a625fbc6f996
 
 const routes = [
     {
@@ -58,15 +63,16 @@ const routes = [
         component: CartView,
     },
     {
-        path: '/success',
+        path: '/payment/success',
         name: 'success',
         component: SuccessView,
     },
     {
-        path: '/cancel',
-        name: 'cancel',
+        path: '/payment/fail',
+        name: 'fail',
         component: CancelView,
     },
+
 ]
 
 const router = createRouter({

@@ -1,6 +1,5 @@
 package ku.cs.restaurant.service;
 
-import ku.cs.restaurant.dto.Receipt.CreateRequest;
 import ku.cs.restaurant.entity.Receipt;
 import ku.cs.restaurant.repository.ReceiptRepository;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,9 @@ public class ReceiptService {
         this.receiptRepository = receiptRepository;
     }
 
-    public Receipt createReceipt(CreateRequest receiptRequest) {
+    public Receipt createReceipt(double total) {
         Receipt newReceipt = new Receipt();
-        newReceipt.setTotal(receiptRequest.getTotal());
+        newReceipt.setTotal(total);
 
         return receiptRepository.save(newReceipt);
     }

@@ -4,29 +4,25 @@ import Search from '@/components/Search.vue'
 </script>
 
 <script>
-export default {
-    data() {
-        return {
-            dropdownVisible: false,
-            options: [
-                'Pending',
-                'Preparing',
-                'In delivery',
-                'Delivered',
-                'Cancelled',
-                'All Order',
-            ],
-        }
-    },
-    methods: {
-        toggleDropdown() {
-            this.dropdownVisible = !this.dropdownVisible
-        },
-        selectOption(option) {
-            this.selectedOption = option
-            this.dropdownVisible = false
-        },
-    },
+import { ref } from 'vue'
+const dropdownVisible = ref(false)
+const options = ref([
+    'Pending',
+    'Preparing',
+    'In delivery',
+    'Delivered',
+    'Cancelled',
+    'All Order',
+])
+const selectedOption = ref('')
+
+const toggleDropdown = () => {
+    dropdownVisible.value = !dropdownVisible.value
+}
+
+const selectOption = (option) => {
+    selectedOption.value = option
+    dropdownVisible.value = false
 }
 </script>
 
