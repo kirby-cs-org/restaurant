@@ -8,6 +8,8 @@ import TransactionView from '@/views/TransactionView.vue'
 import ReceiptView from '@/views/ReceiptView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CartView from '@/views/CartView.vue'
+import SuccessView from '@/views/SuccessView.vue'
+import CancelView from '@/views/CancelView.vue'
 
 const routes = [
     {
@@ -54,6 +56,16 @@ const routes = [
         path: '/cart',
         name: 'cart',
         component: CartView,
+    },
+    {
+        path: '/success',
+        name: 'success',
+        component: SuccessView,
+    },
+    {
+        path: '/cancel',
+        name: 'cancel',
+        component: CancelView,
     },
 ]
 
