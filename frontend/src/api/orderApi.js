@@ -5,8 +5,8 @@ const orderApi = {
         return apiClient.get('/order')
     },
 
-    getOrderById(orderId) {
-        return apiClient.get(`/order/${orderId}`)
+    getOrderUserById(orderId) {
+        return apiClient.get(`/order/${orderId}/user`)
     },
 
     createOrder(orderData) {

@@ -6,6 +6,7 @@ import ku.cs.restaurant.dto.food.FoodListDto;
 import ku.cs.restaurant.dto.order.FoodOrder;
 import ku.cs.restaurant.dto.order.OrderRequest;
 import ku.cs.restaurant.dto.order.UpdateStatusRequest;
+import ku.cs.restaurant.dto.order.UserResponse;
 import ku.cs.restaurant.entity.*;
 import ku.cs.restaurant.service.*;
 import ku.cs.restaurant.utils.JwtUtils;
@@ -77,8 +78,8 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/order/{id}")
-    public ResponseEntity<User> getUserByOrderId(@PathVariable("id") UUID id) {
+    @GetMapping("/order/{id}/user")
+    public ResponseEntity<UserResponse> getUserByOrderId(@PathVariable("id") UUID id) {
         try {
             Order order = orderService.findOrderById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Order not found"));
@@ -86,7 +87,13 @@ public class OrderController {
             User user = userService.getUserById(order.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            UserResponse userResponse = new UserResponse();
+            userResponse.setId(user.getId());
+            userResponse.setUsername(user.getUsername());
+            userResponse.setPhone(user.getPhone());
+            userResponse.setRole(user.getRole());
+
+            return new ResponseEntity<>(userResponse, HttpStatus.OK);
 
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
