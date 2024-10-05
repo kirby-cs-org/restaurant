@@ -1,6 +1,5 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.Receipt.CreateRequest;
 import ku.cs.restaurant.entity.Receipt;
 import ku.cs.restaurant.service.ReceiptService;
 import org.springframework.http.HttpStatus;
@@ -17,16 +16,6 @@ public class ReceiptController {
 
     public ReceiptController(ReceiptService service) {
         this.service = service;
-    }
-
-    @PostMapping("/receipt")
-    public ResponseEntity<Receipt> createReceipt(@RequestBody CreateRequest receipt) {
-        try {
-            Receipt receipts = service.createReceipt(receipt);
-            return new ResponseEntity<>(receipts, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping("/receipt")

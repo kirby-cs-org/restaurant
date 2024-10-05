@@ -1,10 +1,7 @@
 package ku.cs.restaurant.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -18,7 +15,7 @@ public class OrderLine {
     @ManyToOne
     @MapsId("orderId")
     @JoinColumn(name = "o_id")
-    private Orders order;
+    private Order order;
 
     @ManyToOne
     @MapsId("foodId")

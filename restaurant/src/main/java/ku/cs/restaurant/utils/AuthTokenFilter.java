@@ -48,8 +48,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return; // หาก JWT ไม่มีหรือไม่ถูกต้อง ให้หยุดการประมวลผล
         }
 
-
-
         try {
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -95,14 +93,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer "))
             return headerAuth.substring(7); // Remove "Bearer " prefix
-        }
 
-        return null; // Return null if no token found
+        return null;
     }
 }

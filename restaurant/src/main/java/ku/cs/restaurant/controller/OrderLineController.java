@@ -18,15 +18,6 @@ public class OrderLineController {
         this.service = service;
     }
 
-    @PostMapping("/order_line")
-    public ResponseEntity<OrderLine> createOrderLine(@RequestBody CreateRequest orderLine) {
-        try {
-            OrderLine orderLines = service.createOrderLine(orderLine);
-            return new ResponseEntity<>(orderLines, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @GetMapping("/order_line")
     public ResponseEntity<List<OrderLine>> getAllOrderLine() {

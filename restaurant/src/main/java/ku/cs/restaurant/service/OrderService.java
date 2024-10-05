@@ -1,6 +1,8 @@
 package ku.cs.restaurant.service;
 
-import ku.cs.restaurant.entity.Orders;
+import ku.cs.restaurant.entity.Order;
+import ku.cs.restaurant.entity.Receipt;
+import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.repository.OrderRepository;
 import ku.cs.restaurant.entity.OrderStatus;
 import org.springframework.stereotype.Service;
@@ -17,28 +19,32 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public Optional<Orders> findOrderById(UUID id) {
+    public Optional<Order> findOrderById(UUID id) {
         return orderRepository.findById(id);
     }
 
     // สร้างออเดอร์ใหม่ 
-    public Orders createOrder(Orders orders) {
-        return orderRepository.save(orders);
+    public Order createOrder(double total, User user, Receipt receipt) {
+        Order order = new Order();
+        order.setTotal(total);
+        order.setUser(user);
+        order.setReceipt(receipt);
+        return orderRepository.save(order);
     }
 
     // ดูทั้งหมด
-    public List<Orders> findOrders() {
+    public List<Order> findOrders() {
         return orderRepository.findAll();
     }
 
     // ดูตามสถานะ
-    public List<Orders> findOrderByStatus(OrderStatus status) {
+    public List<Order> findOrderByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status);
     }
 
     // อัพเดทสถานะ 
-    public Optional<Orders> updateOrderStatusById(UUID id, OrderStatus status) {
-        Optional<Orders> optionalOrder = orderRepository.findById(id);
+    public Optional<Order> updateOrderStatusById(UUID id, OrderStatus status) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
         optionalOrder.ifPresent(orders -> {
             orders.setStatus(status);
             orderRepository.save(orders);
