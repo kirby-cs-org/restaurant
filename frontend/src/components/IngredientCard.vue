@@ -1,5 +1,5 @@
 <template>
-    <div class="border rounded-lg shadow-md bg-white w-56 h-[17rem] bg-red-100">
+    <div class="border rounded-lg shadow-md bg-white w-56 h-[17rem]">
         <img class="rounded-t-lg h-3/5" :src="ingredientData.imagePath" />
         <div class="h-2/5 px-2">
             <h3 class="font-bold text-lg">{{ ingredientData.name }}</h3>

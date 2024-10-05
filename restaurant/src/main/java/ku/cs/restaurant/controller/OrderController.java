@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class OrderController {
@@ -68,6 +69,25 @@ public class OrderController {
         try {
             List<Order> orders = orderService.findOrders();
             return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/order/{id}")
+    public ResponseEntity<User> getUserByOrderId(@PathVariable("id") UUID id) {
+        try {
+            Order order = orderService.findOrderById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+            User user = userService.getUserById(order.getUser().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
