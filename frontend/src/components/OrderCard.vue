@@ -5,9 +5,7 @@
         <!-- Order Details -->
         <div class="flex flex-col">
             <span class="text-lg font-bold">Order #{{ index }}</span>
-            <span class="text-sm text-gray-500"
-                >By {{ getUsernameById(order.id) }}</span
-            >
+            <span class="text-sm text-gray-500">By {{ username }}</span>
             <span class="text-sm text-gray-500"
                 >Time: {{ order.createdAt }}</span
             >
@@ -38,7 +36,7 @@
 </template>
 
 <script setup>
-import userApi from '@/api/userApi'
+import orderApi from '@/api/orderApi'
 import { ref, onMounted, computed } from 'vue'
 
 // Props
@@ -53,18 +51,17 @@ const props = defineProps({
 // Username state
 const username = ref('')
 
-// Fetch username by order's user ID
+// Fetch the username when the component is mounted
 const getUsernameById = async (id) => {
     try {
-        const { res } = await userApi.getUserById(id)
-        console.log(res.data)
-        return res.data.username // assuming the API returns `username`
+        const res = await orderApi.getOrderUserById(id)
+        console.log(res.data.username)
+        username.value = res.data.username // Update the username correctly
     } catch (error) {
         console.error('Error fetching username:', error)
     }
 }
 
-// Fetch the username when the component is mounted
 onMounted(() => {
     getUsernameById(props.order.id)
 })
