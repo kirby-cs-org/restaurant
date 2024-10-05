@@ -4,6 +4,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import Card from '@/components/Card.vue'
 import Search from '@/components/Search.vue'
 import { foodsStore } from '@/stores/cart'
+import Cart from '@/components/Cart.vue'
 
 const foodStore = foodsStore()
 const searchQuery = ref('')
@@ -33,21 +34,12 @@ onMounted(() => {
             class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
         >
             <!-- search filter section  -->
-            <section class="flex">
+            <section class="flex gap-4">
                 <Search @update-search="searchQuery = $event" />
-                <span class="flex gap-8">
-                    <div class="flex items-center cursor-pointer">
-                        <fa icon="bell" />
-                    </div>
-                    <RouterLink to="/cart">
-                        <div
-                            class="bg-gray-200 py-2 px-4 rounded-md cursor-pointer hover:shadow-md duration-200 gap-2 flex items-center"
-                        >
-                            <fa icon="cart-shopping" />
-                            <span>Cart</span>
-                        </div>
-                    </RouterLink>
-                </span>
+                <div class="flex items-center cursor-pointer">
+                    <fa icon="bell" />
+                </div>
+                <Cart :qty="foodStore.cartQty" />
             </section>
             <!-- Name section  -->
             <section class="w-full h-12">

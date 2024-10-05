@@ -7,6 +7,15 @@ export const foodsStore = defineStore('foods', {
         cart: JSON.parse(localStorage.getItem('carts')) || [],
     }),
 
+    getters: {
+        cartQty: (state) => {
+            console.log(
+                state.foods.reduce((sum, item) => sum + item.quantity, 0)
+            )
+            return state.cart.reduce((sum, item) => sum + item.quantity, 0)
+        },
+    },
+
     actions: {
         async fetchFoods() {
             try {
