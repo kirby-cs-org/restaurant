@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class FoodOrder {
     private Food food;
-    private int qty;
+    private int quantity;
 }

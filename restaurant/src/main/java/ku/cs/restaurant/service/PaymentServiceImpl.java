@@ -27,7 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PROMPTPAY)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:5173/payment/success?id=" + order.getId())
-                .setCancelUrl("http://localhost:5173/fail")
+                .setCancelUrl("http://localhost:5173/payment/fail")
                 .addLineItem(SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()

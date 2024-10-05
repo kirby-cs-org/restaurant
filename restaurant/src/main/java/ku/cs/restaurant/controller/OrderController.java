@@ -47,7 +47,7 @@ public class OrderController {
                 Order createdOrder = orderService.createOrder(orderRequest.calculateTotal(), user, receipt);
 
                 for (FoodOrder foodOrder : orderRequest.getFoods())
-                    orderLineService.createOrderLine(foodOrder.getQty(), createdOrder, foodOrder.getFood());
+                    orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
 
                 PaymentResponse response = paymentService.createPaymentLink(createdOrder);
 

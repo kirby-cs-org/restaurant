@@ -11,7 +11,7 @@ public class OrderRequest {
     public double calculateTotal() {
         double total = 0;
         for (FoodOrder foodOrder : foods) {
-            total += foodOrder.getQty() * foodOrder.getFood().getPrice();
+            total += foodOrder.getQuantity() * foodOrder.getFood().getPrice();
         }
         return total; // คืนค่าผลรวม
     }
@@ -19,7 +19,7 @@ public class OrderRequest {
     public int sumQuantity() {
         int sum = 0;
         for (FoodOrder foodOrder : foods) {
-            sum += foodOrder.getQty();
+            sum += foodOrder.getQuantity();
         }
         return sum;
     }
