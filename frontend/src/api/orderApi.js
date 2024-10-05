@@ -15,7 +15,7 @@ const orderApi = {
 
     updateOrderStatus(orderStatus) {
         return apiClient.patch('/order', orderStatus)
-    },
+    }
 }
 
 export default orderApi

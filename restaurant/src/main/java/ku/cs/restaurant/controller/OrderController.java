@@ -1,6 +1,8 @@
 package ku.cs.restaurant.controller;
 
 import ku.cs.restaurant.dto.Payment.PaymentResponse;
+import ku.cs.restaurant.dto.food.FoodDto;
+import ku.cs.restaurant.dto.food.FoodListDto;
 import ku.cs.restaurant.dto.order.FoodOrder;
 import ku.cs.restaurant.dto.order.OrderRequest;
 import ku.cs.restaurant.dto.order.UpdateStatusRequest;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderController {
@@ -92,6 +95,55 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    //แสดงใบเสร็จ
+    @GetMapping("/order/{id}/receipt")
+    public ResponseEntity<Receipt> getReceiptByOrderId(@PathVariable("id") UUID id) {
+        try {
+            Order order = orderService.findOrderById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+            Receipt receipt = order.getReceipt();
+            return new ResponseEntity<>(receipt, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/order/{id}/food")
+    public ResponseEntity<FoodListDto> getFoodByOrderId(@PathVariable("id") UUID id) {
+        try {
+            Order order = orderService.findOrderById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+            List<OrderLine> orderLines = order.getOrderLines();
+            FoodListDto foodListDto = new FoodListDto();
+
+            List<FoodDto> foodDtos = orderLines.stream()
+                    .map(ol -> {
+                        FoodDto foodDto = new FoodDto();
+                        foodDto.setFood(ol.getFood());
+                        foodDto.setQty(ol.getQty());
+                        return foodDto;
+                    })
+                    .collect(Collectors.toList());
+
+            foodListDto.setFoods(foodDtos);
+
+            return ResponseEntity.ok(foodListDto);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 
     // ดูตามสถานะ
     @GetMapping("/order/status")

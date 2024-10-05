@@ -1,19 +1,24 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue';
-import receiptApi from '@/api/receiptApi'; // นำเข้า API
+import receiptApi from '@/api/receiptApi';
 
 // สร้าง reactive state
 import { ref, onMounted } from 'vue';
+
 const b_total = ref('');
 const b_id = ref('');
 const created_at = ref('');
 const username = ref('');
 const formattedDate = ref('');
 
+const goBack = () => {
+  this.$router.push('/food');
+};
+
 onMounted(async () => {
   try {
-    const receiptId = "123456789"; // รับค่า id (อาจจะมาจาก route params)
-    const response = await receiptApi.getReceiptById(receiptId);
+    const receiptId = "123456789"; // รับค่า ID จาก params หรือ state
+    const response = await receiptApi.getReceiptById(receiptId); // เรียก API
 
     // บันทึกข้อมูลที่ดึงมาใน state
     b_total.value = response.data.total;
