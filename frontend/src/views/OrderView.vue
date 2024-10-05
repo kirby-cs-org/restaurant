@@ -106,7 +106,7 @@ const handleViewDetail = (orderId) => {
                         v-for="option in [
                             'PENDING',
                             'COMPLETE',
-                            'CACEL',
+                            'CANCEL',
                             'All Orders',
                         ]"
                         :key="option"
