@@ -86,10 +86,16 @@ public class OrderController {
 
     // อัพเดทสถานะ
     @PatchMapping("/order")
-    public ResponseEntity<Optional<Order>> updateOrderStatusById(@RequestBody UpdateStatusRequest request) {
+    public ResponseEntity<Order> updateOrderStatusById(@RequestBody UpdateStatusRequest request) {
         try {
-            Optional<Order> updatedOrder = orderService.updateOrderStatusById(request.getId(), request.getStatus());
-            return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+            Optional<Order> optionalUpdatedOrder = orderService.updateOrderStatusById(request.getId(),
+                    request.getStatus());
+            if (optionalUpdatedOrder.isPresent()) {
+                Order updatedOrder = optionalUpdatedOrder.get();
+                return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
