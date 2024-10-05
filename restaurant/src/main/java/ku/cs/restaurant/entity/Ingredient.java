@@ -18,6 +18,9 @@ public class Ingredient {
     @Column(name = "i_id")
     private UUID id;
 
+    @Column(name = "i_image")
+    private String imagePath;
+
     @Column(name = "i_name")
     private String name;
 

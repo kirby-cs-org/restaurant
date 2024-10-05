@@ -33,8 +33,21 @@ onMounted(() => {
             class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
         >
             <!-- search filter section  -->
-            <section class="search">
+            <section class="flex">
                 <Search @update-search="searchQuery = $event" />
+                <span class="flex gap-8">
+                    <div class="flex items-center cursor-pointer">
+                        <fa icon="bell" />
+                    </div>
+                    <RouterLink to="/cart">
+                        <div
+                            class="bg-gray-200 py-2 px-4 rounded-md cursor-pointer hover:shadow-md duration-200 gap-2 flex items-center"
+                        >
+                            <fa icon="cart-shopping" />
+                            <span>Cart</span>
+                        </div>
+                    </RouterLink>
+                </span>
             </section>
             <!-- Name section  -->
             <section class="w-full h-12">
@@ -42,7 +55,7 @@ onMounted(() => {
             </section>
             <!-- food list section  -->
             <section class="foods">
-                <ul class="my_grid">
+                <ul class="foods-grid">
                     <li v-for="food in filteredFoods" :key="food.id">
                         <Card :foodsData="food" />
                     </li>
@@ -57,11 +70,3 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
-<style scoped>
-.my_grid {
-    display: grid;
-    gap: 24px 4px;
-    grid-template-columns: repeat(auto-fill, minmax(234px, 1fr));
-}
-</style>

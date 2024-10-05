@@ -17,15 +17,31 @@ public class ImageController {
         this.resourceLoader = resourceLoader;
     }
 
-    @GetMapping("/images/{filename:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+    @GetMapping("/images/foods/{filename:.+}")
+    public ResponseEntity<Resource> getFoodImage(@PathVariable String filename) {
         try {
-            Resource resource = resourceLoader.getResource("classpath:Images/" + filename);
-            if (!resource.exists()) {
+            Resource resource = resourceLoader.getResource("classpath:images/foods/" + filename);
+            if (!resource.exists())
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, "image/jpeg") // Set the correct content type
+                    .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/images/ingredients/{filename:.+}")
+    public ResponseEntity<Resource> getIngredientImage(@PathVariable String filename) {
+        try {
+            Resource resource = resourceLoader.getResource("classpath:images/ingredients/" + filename);
+            if (!resource.exists())
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         } catch (Exception e) {

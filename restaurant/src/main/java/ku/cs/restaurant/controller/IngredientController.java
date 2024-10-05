@@ -2,13 +2,21 @@ package ku.cs.restaurant.controller;
 
 import ku.cs.restaurant.dto.ingredient.UpdateQtyRequest;
 import ku.cs.restaurant.dto.ingredient.UpdateStatusRequest;
+import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.service.IngredientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,10 +29,27 @@ public class IngredientController {
         this.service = service;
     }
 
+    private String saveImage(MultipartFile image) throws IOException {
+        String folderPath = "src/main/resources/images/ingredients";
+        File dir = new File(folderPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        Path path = Paths.get(folderPath, fileName);
+        Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+        return path.toString();
+    }
+
     // Create a new ingredient
     @PostMapping("/ingredient")
-    public ResponseEntity<Ingredient> createIngredient(@RequestBody Ingredient ingredient) {
+    public ResponseEntity<Ingredient> createIngredient(@RequestPart("ingredient") Ingredient ingredient, @RequestPart("image") MultipartFile image) {
         try {
+            String imagePath = saveImage(image);
+            ingredient.setImagePath(imagePath);
+
             Ingredient createdIngredient = service.createIngredient(ingredient);
             return new ResponseEntity<>(createdIngredient, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -55,6 +80,15 @@ public class IngredientController {
     @GetMapping("/ingredient")
     public ResponseEntity<List<Ingredient>> findIngredients() {
         List<Ingredient> ingredients = service.findIngredients();
+        String baseUrl = "http://localhost:8088/images/ingredients/";
+
+        for (Ingredient ingredient : ingredients) {
+            String imagePath = ingredient.getImagePath().replace("\\", "/");
+
+            String fileName = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+
+            ingredient.setImagePath(baseUrl + fileName);
+        }
         return new ResponseEntity<>(ingredients, HttpStatus.OK);
     }
 

@@ -40,7 +40,7 @@ public class FoodController {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        String folderPath = "src/main/resources/images";
+        String folderPath = "src/main/resources/images/foods";
         File dir = new File(folderPath);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -69,7 +69,7 @@ public class FoodController {
     @GetMapping("/foods")
     public ResponseEntity<List<Food>> getAll() {
         List<Food> foods = service.getAllFoods();
-        String imageBaseUrl = "http://localhost:8088/images/";
+        String imageBaseUrl = "http://localhost:8088/images/foods/";
 
         for (Food food : foods) {
             String imagePath = food.getImagePath().replace("\\", "/");
