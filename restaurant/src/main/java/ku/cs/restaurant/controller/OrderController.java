@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class OrderController {
@@ -73,6 +74,8 @@ public class OrderController {
         }
     }
 
+
+
     // ดูตามสถานะ
     @GetMapping("/order/status")
     public ResponseEntity<List<Order>> getOrdersByStatus(@RequestBody OrderStatus status) {
@@ -97,6 +100,30 @@ public class OrderController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/order/{id}")
+    public ResponseEntity<User> getUserByOrderId(@PathVariable("id") UUID id) {
+        try {
+            // Find the order by its ID
+            Order order = orderService.findOrderById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+            // Find the user associated with the order
+            User user = userService.getUserById(order.getUser().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            // Return user details with HTTP 200 OK
+            return new ResponseEntity<>(user, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            // Return 404 if order or user is not found
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            // Handle any other exceptions and return 400 Bad Request
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
