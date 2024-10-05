@@ -53,6 +53,7 @@
 import { ref, computed, watchEffect } from 'vue'
 import { foodsStore } from '@/stores/cart'
 import Sidebar from '@/components/Sidebar.vue'
+import orderApi from '@/api/orderApi'
 
 const cart = ref(JSON.parse(localStorage.getItem('carts')) || [])
 
@@ -80,8 +81,9 @@ watchEffect(() => {
 })
 
 const createOrder = async () => {
+    const orderData = JSON.stringify({ foods: foodStore.cart })
     const { data } = await orderApi.createOrder(orderData)
 
-    console.log(data)
+    window.open(data.paymentLink)
 }
 </script>
