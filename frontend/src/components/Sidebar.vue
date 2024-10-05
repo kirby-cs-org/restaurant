@@ -3,11 +3,13 @@
         class="flex flex-col justify-between items-center h-screen w-56 py-4 border-r-2"
     >
         <div class="flex flex-col gap-12">
-            <div class="flex">
+            <div class="flex items-center">
                 <img src="../assets/food-icon.png" width="42px" />
-                <span class="flex items-center font-bold text-lg"
-                    >&nbsp;SuperDuperPOS</span
-                >
+                <router-link to="/food">
+                    <span class="flex font-bold text-lg"
+                        >&nbsp;SuperDuperPOS</span
+                    >
+                </router-link>
             </div>
             <ul class="flex flex-col gap-8">
                 <li
