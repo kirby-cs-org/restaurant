@@ -84,6 +84,6 @@ const createOrder = async () => {
     const orderData = JSON.stringify({ foods: foodStore.cart })
     const { data } = await orderApi.createOrder(orderData)
 
-    window.open(data.paymentLink)
+    window.location.href = data.paymentLink
 }
 </script>
