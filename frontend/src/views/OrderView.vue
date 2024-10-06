@@ -12,8 +12,16 @@ const searchQuery = ref('')
 
 const fetchOrders = async () => {
     try {
-        const response = await orderApi.getOrders()
-        orders.value = response.data
+        const orderResponse = await orderApi.getOrders()
+        const userResponse = await userApi.getUsers()
+
+        orders.value = orderResponse.data
+        username.value = userResponse.data
+        role.value = userResponse.data
+
+        if (role.value === 'CUSTOMER') {
+            filtered = filtered.filter((order) => order.username === username.value)
+        }
     } catch (error) {
         console.error('Error fetching orders:', error)
     }
