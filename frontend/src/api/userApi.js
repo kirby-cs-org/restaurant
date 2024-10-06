@@ -8,6 +8,10 @@ const userApi = {
     getUserById(userId) {
         return apiClient.get(`/user/${userId}`)
     },
+
+    getLogginUser() {
+        return apiClient.get()
+    }
 }
 
 export default userApi
