@@ -9,9 +9,10 @@ const userApi = {
         return apiClient.get(`/user/${userId}`)
     },
 
-    getLogginUser() {
-        return apiClient.get()
-    }
+    getUserByJwt() {
+        return apiClient.get('/user/jwt', localStorage.getItem('token'))
+    },
+    
 }
 
 export default userApi
