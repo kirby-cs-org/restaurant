@@ -53,14 +53,14 @@
     }
 
     @font-face {
-        font-family: 'Gilroy';
+        font-family: 'Gilroy Black';
         src: url('Gilroy-Black.ttf') format('truetype');
         font-weight: 900;
         font-style: normal;
     }
 
     @font-face {
-        font-family: 'Gilroy';
+        font-family: 'Gilroy Heavy Italic';
         src: url('Gilroy-HeavyItalic.ttf') format('truetype');
         font-weight: 900;
         font-style: italic;

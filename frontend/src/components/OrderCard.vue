@@ -1,36 +1,29 @@
 <template>
-    <div
-        class="flex justify-between items-center p-4 shadow-md rounded-lg bg-white mb-4"
-    >
-        <!-- Order Details -->
-        <div class="flex flex-col">
-            <span class="text-lg font-bold">Order #{{ index }}</span>
-            <span class="text-sm text-gray-500">By {{ username }}</span>
-            <span class="text-sm text-gray-500"
-                >Time: {{ order.createdAt }}</span
-            >
-            <span class="text-sm" :class="statusClass"
-                >Status: {{ order.status }}</span
-            >
+<div class="flex justify-between px-3 py-2 shadow-md rounded-xl bg-white mb-5">
+    <div class="flex flex-col">
+        <div class="flex items-center">
+            <span class="text-4xl pr-2">Order #{{ index }}</span>
+            <span class="align-text-bottom text-lg " 
+                  :style="{ color: order.status === 'COMPLETE' ? '#ADE92E' : order.status === 'PENDING' ? '#FF6B00' : '#FF5151' }"> 
+                ● 
+            </span>
+            <span class="align-text-bottom text-lg ml-1">{{ order.status }}</span>
         </div>
-
-        <!-- Order Actions and Amount -->
+        <span class="text-md text-gray-500 py-1 ml-1">By {{ username }}</span>
+        <span class="text-md text-gray-500 ml-1">Time: {{ order.createdAt }}</span>
+        <span class="py-2 pl-1">
+    <button class="px-10 py-2 mt-2 mr-10 rounded-lg" style="background-color: #BCF14A; color: #000000;" @click="markOrderSuccess(order.id)">
+        Mark as Success
+    </button>
+    <button class="px-12 py-2 mt-2 rounded-lg" style="background-color: #F6F6F6; color: #000000;" @click="viewOrderDetail(order.id)">
+        View Details
+    </button>
+</span>
+    </div>
         <div class="flex flex-col items-end">
-            <span class="text-xl font-bold text-gray-800"
+            <span class="text-4xl text-gray-750"
                 >{{ order.total }} ฿</span
             >
-            <button
-                class="px-4 py-2 mt-2 bg-green-500 text-white rounded-md"
-                @click="markOrderSuccess(order.id)"
-            >
-                Mark as Success
-            </button>
-            <button
-                class="px-4 py-2 mt-2 bg-gray-200 text-gray-700 rounded-md"
-                @click="viewOrderDetail(order.id)"
-            >
-                View Details
-            </button>
         </div>
     </div>
 </template>
@@ -50,7 +43,6 @@ const props = defineProps({
 
 // Username state
 const username = ref('')
-
 // Fetch the username when the component is mounted
 const getUsernameById = async (id) => {
     try {
@@ -61,31 +53,12 @@ const getUsernameById = async (id) => {
         console.error('Error fetching username:', error)
     }
 }
-
 onMounted(() => {
     getUsernameById(props.order.id)
 })
 
 // Emit events to parent component
 const emit = defineEmits(['mark-success', 'view-detail'])
-
-// Dynamically set the class for status
-const statusClass = computed(() => {
-    switch (props.order.status) {
-        case 'Pending':
-            return 'text-yellow-500'
-        case 'Preparing':
-            return 'text-orange-500'
-        case 'In delivery':
-            return 'text-blue-500'
-        case 'Delivered':
-            return 'text-green-500'
-        case 'Cancelled':
-            return 'text-red-500'
-        default:
-            return ''
-    }
-})
 
 // Mark order as success
 const markOrderSuccess = (id) => {
@@ -96,4 +69,5 @@ const markOrderSuccess = (id) => {
 const viewOrderDetail = (id) => {
     emit('view-detail', id)
 }
+
 </script>
