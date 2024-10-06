@@ -4,6 +4,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import Search from '@/components/Search.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import orderApi from '@/api/orderApi'
+import userApi from '@/api/userApi'
 
 const orders = ref([])
 const dropdownVisible = ref(false)
@@ -114,6 +115,7 @@ const handleViewDetail = (orderId) => {
             <!-- Order list -->
             <section class="mt-4">
                 <OrderCard
+
                     v-for="(order, i) in filteredOrders"
                     :index="i + 1"
                     :key="order.id"
