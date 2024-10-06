@@ -1,6 +1,7 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue';
 import receiptApi from '@/api/receiptApi';
+import router from '@/router'
 
 // สร้าง reactive state
 import { ref, onMounted } from 'vue';
@@ -12,8 +13,8 @@ const username = ref('');
 const formattedDate = ref('');
 
 const goBack = () => {
-  this.$router.push('/food');
-};
+    router.push('/food')
+}
 
 onMounted(async () => {
   try {
@@ -45,20 +46,21 @@ onMounted(async () => {
       <Sidebar />
     </aside>
 
-    <main class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-[#FDFDFD] h-screen">
+    <main class="ml-[14rem] w-full h-screen py-4 px-8 flex flex-col bg-[#FDFDFD]">
       <!-- Back button -->
-      <div class="flex bg-[#5A5A5A] text-white rounded-lg px-3 py-2 w-10 mb-4">
-        <button @click="goBack">
+      <div class="flex bg-[#C7C7C7FF] text-white rounded-lg px-3 py-2 w-10 mb-4" @click="goBack">
+        <button>
           <fa icon="arrow-left" />
         </button>
       </div>
-
-      <!-- Receipt -->
-      <div class="w-full p-5 rounded-lg shadow-md border border-gray-300">
+      
+      <div class="flex justify-center h-5/6 relative ">
+        <!-- Receipt -->
+        <div class="w-4/6 p-10 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD]">
         <h1 class="text-center text-3xl mb-4">SuperDuper Restaurant</h1>
         <p class="text-center">{{ formattedDate }}</p>
 
-        <hr class="my-2 border-1 border-dashed border-gray-400" />
+        <hr class="my-2 border-1 border-dashed border-gray-400 " />
 
         <!-- Items -->
         <div class="flex justify-between mb-2">
@@ -73,8 +75,8 @@ onMounted(async () => {
           <p>Pad Kaprao</p>
           <p>$23.25</p>
         </div>
-
-        <hr class="my-2 border-1 border-dashed border-gray-400" />
+        <div class="flex-col justify-between content-bottom bottom-10">
+          <hr class="my-2 border-1 border-dashed border-gray-400" />
 
         <!-- Subtotal -->
         <div class="flex justify-between mb-2">
@@ -89,11 +91,10 @@ onMounted(async () => {
         </div>
 
         <!-- Total -->
-        <div class="flex justify-between mb-2">
+        <div class="flex mb-2">
           <p>Total:</p>
           <p>{{ b_total }}</p>
         </div>
-
         <hr class="my-2 border-1 border-dashed border-gray-400" />
 
         <!-- Reference -->
@@ -114,8 +115,11 @@ onMounted(async () => {
           <p>{{ username }}</p>
         </div>
 
-        <p class="text-center mt-5">Thank you for your purchase. Enjoy your meal! :D</p>
+        <p class="text-center mt-5 ">Thank you for your purchase. Enjoy your meal! :D</p>
+        </div>
       </div>
+      </div>
+      
     </main>
   </div>
 </template>
