@@ -44,10 +44,10 @@ onMounted(async () => {
                     Unfortunately, your payment could not be processed. Please try again!
                 </p>
                 <router-link
-                    to="/menu"
+                    to="/order"
                     class="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-200 transition-all duration-200"
                 >
-                    Check your receipt!
+                    Try again!
                 </router-link>
             </div>
         </main>
