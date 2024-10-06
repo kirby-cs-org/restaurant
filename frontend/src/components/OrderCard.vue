@@ -65,14 +65,12 @@ const props = defineProps({
 })
 
 const username = ref('')
-const role = ref('')
 
 const getUsernameById = async (id) => {
     try {
         const res = await orderApi.getOrderUserById(id)
         console.log(res.data)
         username.value = res.data.username
-        role.value = res.data.role
     } catch (error) {
         console.error('Error fetching username:', error)
     }
