@@ -27,41 +27,103 @@ public class OrderController {
     private final ReceiptService receiptService;
     private final JwtUtils jwtUtils;
     private final OrderLineService orderLineService;
+    private final IngredientService ingredientService;
+    private final FoodService foodService;
 
     public OrderController(OrderService orderService, PaymentService paymentService, UserService userService,
-                           JwtUtils jwtUtils, ReceiptService receiptService, OrderLineService orderLineService) {
+                           JwtUtils jwtUtils, ReceiptService receiptService, OrderLineService orderLineService,
+                           IngredientService ingredientService, FoodService foodService) {
         this.orderService = orderService;
         this.paymentService = paymentService;
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.receiptService = receiptService;
         this.orderLineService = orderLineService;
+        this.ingredientService = ingredientService;
+        this.foodService = foodService;
     }
 
     @PostMapping("/order")
     public ResponseEntity<PaymentResponse> createOrder(@RequestBody OrderRequest orderRequest,
                                                        @RequestHeader("Authorization") String jwt) {
         try {
+            // Extract the username from the JWT
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
-
             Optional<User> optionalUser = userService.getUserByUsername(username);
 
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                Receipt receipt = receiptService.createReceipt((orderRequest.calculateTotal()));
+
+                // Check if there are food orders
+                List<FoodOrder> foodOrders = orderRequest.getFoods();
+                if (foodOrders.isEmpty()) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+
+                // Check if the ingredients are sufficient
+                for (FoodOrder foodOrder : foodOrders) {
+                    UUID foodId = foodOrder.getFood().getId(); // Get food ID
+                    Optional<Food> optionalFood = foodService.getFoodById(foodId); // Use findById to fetch food
+
+                    if (optionalFood.isPresent()) {
+                        Food food = optionalFood.get();
+                        List<Recipe> recipes = food.getRecipes(); // Fetch the recipes for the food item
+
+                        if (recipes.isEmpty()) {
+                            System.out.println("No recipes found for food: " + foodId);
+                            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                        }
+
+                        for (Recipe recipe : recipes) {
+                            int ingredientRequiredQty = foodOrder.getQuantity() * recipe.getQty();
+                            int ingredientAvailableQty = recipe.getIngredient().getQty();
+
+                            // Check if there are enough ingredients
+                            if (ingredientRequiredQty > ingredientAvailableQty) {
+                                System.out.println("Insufficient ingredient: " + recipe.getIngredient().getId() +
+                                        " | Required: " + ingredientRequiredQty + ", Available: " + ingredientAvailableQty);
+                                return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);
+                            }
+                        }
+                    } else {
+                        System.out.println("Food not found for ID: " + foodId);
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    }
+                }
+
+                // Create the receipt and order if all checks pass
+                Receipt receipt = receiptService.createReceipt(orderRequest.calculateTotal());
                 Order createdOrder = orderService.createOrder(orderRequest.calculateTotal(), user, receipt);
 
-                for (FoodOrder foodOrder : orderRequest.getFoods())
+                for (FoodOrder foodOrder : foodOrders) {
+                    // Create order lines
                     orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
 
-                PaymentResponse response = paymentService.createPaymentLink(createdOrder);
+                    // Update ingredient quantities after the order is created
+                    UUID foodId = foodOrder.getFood().getId();
+                    Optional<Food> optionalFood = foodService.getFoodById(foodId);
 
+                    if (optionalFood.isPresent()) {
+                        Food food = optionalFood.get();
+                        List<Recipe> recipes = food.getRecipes();
+                        for (Recipe recipe : recipes) {
+                            Ingredient ingredient = recipe.getIngredient();
+                            int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
+
+                            // Update the ingredient quantity
+                            ingredientService.updateQty(ingredient.getId(), ingredient.getQty() - ingredientUsedAmount);
+                        }
+                    }
+                }
+
+                // Create payment link
+                PaymentResponse response = paymentService.createPaymentLink(createdOrder);
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Exception occurred: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
