@@ -5,17 +5,15 @@ import Search from '@/components/Search.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import orderApi from '@/api/orderApi'
 
-// State for orders, dropdown, and search query
 const orders = ref([])
 const dropdownVisible = ref(false)
 const selectedOption = ref('')
 const searchQuery = ref('')
 
-// Fetch orders when the component is mounted
 const fetchOrders = async () => {
     try {
         const response = await orderApi.getOrders()
-        orders.value = response.data // Assuming this returns an array of orders
+        orders.value = response.data
     } catch (error) {
         console.error('Error fetching orders:', error)
     }
@@ -25,18 +23,15 @@ onMounted(() => {
     fetchOrders()
 })
 
-// Toggle dropdown visibility
 const toggleDropdown = () => {
     dropdownVisible.value = !dropdownVisible.value
 }
 
-// Select dropdown option
 const selectOption = (option) => {
     selectedOption.value = option
     dropdownVisible.value = false
 }
 
-// Computed orders based on selected dropdown and search query
 const filteredOrders = computed(() => {
     let filtered = orders.value
     if (selectedOption.value && selectedOption.value !== 'All Orders') {
@@ -52,7 +47,6 @@ const filteredOrders = computed(() => {
     return filtered
 })
 
-// Handle marking order as success
 const handleOrderSuccess = async (orderId) => {
     const order = orders.value.find((o) => o.id === orderId)
     if (order) {
@@ -65,7 +59,6 @@ const handleOrderSuccess = async (orderId) => {
     }
 }
 
-// Handle viewing order details
 const handleViewDetail = (orderId) => {
     console.log('View details for order:', orderId)
 }
@@ -132,7 +125,3 @@ const handleViewDetail = (orderId) => {
         </main>
     </div>
 </template>
-
-<style scoped>
-/* Additional styles if needed */
-</style>
