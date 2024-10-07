@@ -9,6 +9,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import CartView from '@/views/CartView.vue'
 import SuccessView from '@/views/SuccessView.vue'
 import CancelView from '@/views/CancelView.vue'
+import AddIngredientsView from '@/views/AddIngredientsView.vue'
 
 const routes = [
     {
@@ -60,6 +61,11 @@ const routes = [
         path: '/payment/fail',
         name: 'fail',
         component: CancelView,
+    },
+    {
+        path: '/addingredients',
+        name: 'addingredients',
+        component: AddIngredientsView,
     },
 ]
 

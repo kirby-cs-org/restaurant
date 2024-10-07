@@ -8,6 +8,11 @@ const userApi = {
     getUserById(userId) {
         return apiClient.get(`/user/${userId}`)
     },
+
+    getUserByJwt() {
+        return apiClient.get('/user/jwt', localStorage.getItem('token'))
+    },
+
 }
 
 export default userApi

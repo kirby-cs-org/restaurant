@@ -7,18 +7,43 @@ import orderApi from '@/api/orderApi'
 import router from '@/router'
 
 const orders = ref([])
+const role = ref([])
+const user = ref([])
+const userOrder = ref([])
+
 const dropdownVisible = ref(false)
 const selectedOption = ref('')
 const searchQuery = ref('')
 
 const fetchOrders = async () => {
     try {
-        const response = await orderApi.getOrders()
-        orders.value = response.data
+        const orderResponse = await orderApi.getOrders();
+        const userResponse = await userApi.getUserByJwt();
+
+        user.value = userResponse.data;
+        role.value = userResponse.data.role;
+        
+        const loggedInUserId = userResponse.data.id; 
+
+        if (role.value === 'ADMIN') {
+            orders.value = orderResponse.data;
+        } else if (role.value === 'CUSTOMER') {
+            const userOrderPromises = orderResponse.data.map(async (order) => {
+                const userOrderResponse = await orderApi.getOrderUserById(order.id);
+                return {
+                    ...order,
+                    user_id: userOrderResponse.data.id 
+                };
+            });
+            const userOrders = await Promise.all(userOrderPromises);
+            orders.value = userOrders.filter(order => order.user_id === loggedInUserId);
+        }
+
     } catch (error) {
-        console.error('Error fetching orders:', error)
+        console.error('Error fetching orders:', error);
     }
 }
+
 
 onMounted(() => {
     fetchOrders()
@@ -47,6 +72,8 @@ const filteredOrders = computed(() => {
     }
     return filtered
 })
+
+
 
 const handleOrderSuccess = async (orderId) => {
     const order = orders.value.find((o) => o.id === orderId)
@@ -115,6 +142,7 @@ const handleViewDetail = (orderId) => {
             <!-- Order list -->
             <section class="mt-4">
                 <OrderCard
+        
                     v-for="(order, i) in filteredOrders"
                     :index="i + 1"
                     :key="order.id"

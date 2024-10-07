@@ -13,6 +13,7 @@ const ingredientApi = {
         return apiClient.post('/ingredient', ingredientData)
     },
 
+
     updateIngredient(ingredientId, ingredientData) {
         return apiClient.put(`/ingredient/${ingredientId}`, ingredientData)
     },
