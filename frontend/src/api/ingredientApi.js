@@ -2,24 +2,31 @@ import apiClient from './index'
 
 const ingredientApi = {
     getIngredient() {
-        return apiClient.get('/ingredient')
+        return apiClient.get('/ingredient', {
+            headers: { 'Content-Type': 'application/json' },
+        })
     },
 
     getIngredientById(ingredientId) {
-        return apiClient.get(`/ingredient/${ingredientId}`)
+        return apiClient.get(`/ingredient/${ingredientId}`, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     },
 
     createIngredient(ingredientData) {
-        return apiClient.post('/ingredient', ingredientData)
+        return apiClient.post('/ingredient', ingredientData) // multipart/form-data
     },
 
-
-    updateIngredient(ingredientId, ingredientData) {
-        return apiClient.put(`/ingredient/${ingredientId}`, ingredientData)
+    updateIngredient(ingredientData) {
+        return apiClient.patch(`/ingredient`, ingredientData, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     },
 
     deleteIngredient(ingredientId) {
-        return apiClient.delete(`/ingredient/${ingredientId}`)
+        return apiClient.delete(`/ingredient/${ingredientId}`, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     },
 }
 
