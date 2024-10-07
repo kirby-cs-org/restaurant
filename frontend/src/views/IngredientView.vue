@@ -47,11 +47,13 @@ onMounted(() => {
         >
         <section class="flex gap-4">
             <Search @update-search="searchQuery = $event" />
-            <div class="flex items-center cursor-pointer">
-                    <span @click="addingredients"
-                    ><fa icon="add" />Ingredient
-                    </span>
-                </div>
+            <div style="display: flex; background-color: #E5E7EB; align-items: center; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 0.5rem; transition: transform 0.3s;" 
+                onmouseover="this.style.transform='scale(1.05)'" 
+                onmouseout="this.style.transform='scale(1)'">
+                <span style="display: flex; align-items: center; cursor: pointer;" @click="addingredients()">
+                    <fa icon="add" style="margin-right: 0.25rem;" /> Ingredient
+                </span>
+            </div>
             </section>
             <div class="text-2xl font-bold">Ingredients</div>
             <section class="pb-12">

@@ -3,23 +3,16 @@ import Sidebar from '@/components/Sidebar.vue'
 import receiptApi from '@/api/receiptApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted} from 'vue'
 
-// Reactive state
 const b_total = ref('')
 const b_id = ref('')
 const created_at = ref('')
 const username = ref('')
 const foodList = ref([])
 
-// Computed subtotal based on foodList prices
-// const sub_total = computed(() => {
-//     return foodList.value.reduce((acc, item) => acc + item.price, 0).toFixed(2)
-// })
-
-// Navigation to go back
 const goBack = () => {
-    router.push('/food')
+    router.push('/order')
 }
 
 onMounted(async () => {
@@ -34,9 +27,6 @@ onMounted(async () => {
         created_at.value = responseOrder.data.createdAt
         username.value = responseUser.data.username
         foodList.value = responseFood.data.foods
-
-        console.log(responseFood.data.foods)
-        console.log('ref', foodList.value)
     } catch (error) {
         console.error('Error fetching receipt:', error)
     }
@@ -79,8 +69,8 @@ onMounted(async () => {
                             <li
                                 v-for="item in foodList"
                                 class="flex justify-between"
-                            >
-                                <p>{{ item.food.name }} x {{ item.qty }}</p>
+                                >
+                                <p>{{ item.qty }} * {{ item.food.name }}</p>
                                 <p>{{ item.food.price * item.qty }} B</p>
                             </li>
                         </ul>
@@ -93,13 +83,19 @@ onMounted(async () => {
                         <!-- Subtotal -->
                         <div class="flex justify-between mb-2">
                             <p>Subtotal:</p>
-                            <p>{{ sub_total }}</p>
+                            <p>{{ b_total }}</p>
+                        </div>
+
+                        <!-- Subtotal -->
+                        <div class="flex justify-between mb-2">
+                            <p>VAT:</p>
+                            <p>{{ (b_total * 0.07).toFixed(1) }}</p>
                         </div>
 
                         <!-- Total -->
                         <div class="flex justify-between mb-2">
                             <p>Total:</p>
-                            <p>{{ b_total }}</p>
+                            <p>{{ (b_total * 0.07) + b_total}}</p>
                         </div>
 
                         <hr

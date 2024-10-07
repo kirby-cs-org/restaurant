@@ -58,7 +58,6 @@ const menuItems = [
     { label: 'Menu', icon: 'bars', path: '/food' },
     { label: 'Order', icon: 'book', path: '/order' },
     { label: 'Ingredient', icon: 'book', path: '/ingredient' },
-    { label: 'Receipt', icon: 'receipt', path: '/receipt' },
     { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
 ]
 
