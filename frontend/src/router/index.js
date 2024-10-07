@@ -10,6 +10,7 @@ import CartView from '@/views/CartView.vue'
 import SuccessView from '@/views/SuccessView.vue'
 import CancelView from '@/views/CancelView.vue'
 import AddIngredientsView from '@/views/AddIngredientsView.vue'
+import AddFoodView from '@/views/AddFoodView.vue'
 
 const routes = [
     {
@@ -66,6 +67,11 @@ const routes = [
         path: '/addingredients',
         name: 'addingredients',
         component: AddIngredientsView,
+    },
+    {
+        path: '/addfood',
+        name: 'addfood',
+        component: AddFoodView,
     },
 ]
 

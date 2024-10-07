@@ -5,6 +5,7 @@ import Card from '@/components/Card.vue'
 import Search from '@/components/Search.vue'
 import { foodsStore } from '@/stores/cart'
 import Cart from '@/components/Cart.vue'
+import router from '@/router'
 
 const foodStore = foodsStore()
 const searchQuery = ref('')
@@ -20,6 +21,9 @@ const filteredFoods = computed(() => {
     )
 })
 
+const addfood = () => {
+    router.push('/addfood')
+}
 onMounted(() => {
     fetchFoods()
 })
@@ -44,6 +48,13 @@ onMounted(() => {
             <!-- Name section  -->
             <section class="w-full h-12">
                 <span class="font-bold text-3xl">Menu</span>
+            </section>
+            <section>
+                <div class="flex items-center cursor-pointer">
+                    <span @click="addfood"
+                    ><fa icon="add" />Food
+                    </span>
+                </div>
             </section>
             <!-- food list section  -->
             <section class="pb-12">
