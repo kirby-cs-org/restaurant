@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import ingredientApi from '@/api/ingredientApi'
+import router from '@/router';
 
 // Utility function to format the date to dd-mm-yy
 const formatDateToDDMMYY = (dateStr) => {
@@ -71,23 +72,37 @@ const submitIngredient = async () => {
         )
     }
 }
+
+const goBack = () => {
+    router.push('/ingredient')
+}
 </script>
 
 <template>
     <div class="flex">
         <aside class="fixed"><Sidebar /></aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex-col gap-4 bg-gray-50 h-screen"
         >
-            <section class="w-full h-12">
-                <h2 class="text-xl font-bold mb-4">Add New Ingredient</h2>
+                    <!-- Back button -->
+                    <div
+                class="flex bg-[#C7C7C7FF] text-white rounded-lg px-3 py-2 w-10 mb-4"
+                @click="goBack"
+            >
+                <button>
+                    <fa icon="arrow-left" />
+                </button>
+            </div>
+            <section class="items-center justify-center flex-col w-10/12 h-12 mx-auto">
+
+                <h2 class="text-4xl font-bold mb-4">Add New Ingredient</h2>
                 <form
                     @submit.prevent="submitIngredient"
-                    class="flex flex-col gap-4"
+                    class="w-full p-10 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD]"
                 >
                     <div>
-                        <label for="name" class="block font-semibold mb-1"
-                            >Name:</label
+                        <label for="name" class="block font-semibold mb-1 pt-3"
+                            >Name</label
                         >
                         <input
                             id="name"
@@ -98,8 +113,8 @@ const submitIngredient = async () => {
                     </div>
 
                     <div>
-                        <label for="amount" class="block font-semibold mb-1"
-                            >Amount:</label
+                        <label for="amount" class="block font-semibold mb-1 pt-3"
+                            >Amount</label
                         >
                         <input
                             type="number"
@@ -111,8 +126,8 @@ const submitIngredient = async () => {
                     </div>
 
                     <div>
-                        <label for="qty" class="block font-semibold mb-1"
-                            >Quantity:</label
+                        <label for="qty" class="block font-semibold mb-1 pt-3"
+                            >Quantity</label
                         >
                         <input
                             type="number"
@@ -124,8 +139,8 @@ const submitIngredient = async () => {
                     </div>
 
                     <div>
-                        <label for="status" class="block font-semibold mb-1"
-                            >Status:</label
+                        <label for="status" class="block font-semibold mb-1 pt-3"
+                            >Status</label
                         >
                         <select
                             id="status"
@@ -138,8 +153,8 @@ const submitIngredient = async () => {
                     </div>
 
                     <div>
-                        <label for="expireDate" class="block font-semibold mb-1"
-                            >Expiration Date (dd-mm-yy):</label
+                        <label for="expireDate" class="block font-semibold mb-1 pt-3"
+                            >Expiration Date</label
                         >
                         <input
                             type="date"
@@ -152,8 +167,8 @@ const submitIngredient = async () => {
 
                     <!-- Image upload field -->
                     <div>
-                        <label for="image" class="block font-semibold mb-1"
-                            >Upload Image:</label
+                        <label for="image" class="block font-semibold mb-1 pt-3"
+                            >Upload Image</label
                         >
                         <input
                             type="file"
@@ -172,13 +187,16 @@ const submitIngredient = async () => {
                             class="w-32 h-32 object-cover"
                         />
                     </div>
-
-                    <button
+                    <div class="flex items-center justify-center">
+                        <button
                         type="submit"
-                        class="mt-4 bg-blue-500 text-white p-2 rounded"
+                        class="w-3/6 mt-4 bg-yellow-300 text- p-2 rounded shadow-md transition-transform"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'"
                     >
                         Add Ingredient
                     </button>
+                    </div>
                 </form>
             </section>
         </main>
