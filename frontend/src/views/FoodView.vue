@@ -50,10 +50,10 @@ onMounted(() => {
                 <span class="font-bold text-3xl">Menu</span>
             </section>
             <section>
-                <div class="flex items-center cursor-pointer">
-                    <span @click="addfood"
-                    ><fa icon="add" />Food
-                    </span>
+                <div
+                    class="inline py-2 px-4 rounded-md items-center cursor-pointer bg-yellow-300 shadow-md"
+                >
+                    <span @click="addfood"><fa icon="add" /> Food </span>
                 </div>
             </section>
             <!-- food list section  -->
