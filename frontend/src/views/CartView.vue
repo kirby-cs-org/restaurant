@@ -82,9 +82,9 @@ watchEffect(() => {
 
 const createOrder = async () => {
     const orderData = JSON.stringify({ foods: foodStore.cart })
-    const { data } = await orderApi.createOrder(orderData)
+    const { data: res } = await orderApi.createOrder(orderData)
 
-    window.location.href = data.paymentLink
+    window.location.href = res.data.paymentLink
     // window.open(data.paymentLink)
 }
 </script>

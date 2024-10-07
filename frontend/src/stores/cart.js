@@ -19,7 +19,7 @@ export const foodsStore = defineStore('foods', {
     actions: {
         async fetchFoods() {
             try {
-                const res = await foodApi.getFoods()
+                const { data: res } = await foodApi.getFoods()
                 this.foods = res.data
             } catch (error) {
                 console.error('Error fetching foods:', error)

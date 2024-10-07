@@ -1,11 +1,9 @@
 package ku.cs.restaurant.service;
 
-import ku.cs.restaurant.dto.recipe.CreateRequest;
+import ku.cs.restaurant.dto.recipe.IngredientQtyRequest;
 import ku.cs.restaurant.entity.Food;
-import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
-import ku.cs.restaurant.exception.ResourceNotFoundException;
 import ku.cs.restaurant.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,35 +13,33 @@ import java.util.Optional;
 @Service
 public class RecipeService {
     private final RecipeRepository recipeRepository;
-    private final FoodService foodService;
     private final IngredientService ingredientService;
 
     public RecipeService(RecipeRepository recipeRepository, FoodService foodService, IngredientService ingredientService) {
         this.recipeRepository = recipeRepository;
-        this.foodService = foodService;
         this.ingredientService = ingredientService;
     }
 
-    public Recipe createRecipe(CreateRequest recipe) {
-        Recipe newRecipe = new Recipe();
-        newRecipe.setId(recipe.getId());
-        newRecipe.setQty(recipe.getQty());
+    public void createRecipe(Recipe recipe) {
+        recipeRepository.save(recipe);
+    }
 
-        Optional<Food> optionalFood = foodService.getFoodById(recipe.getId().getFoodId());
-        if (optionalFood.isPresent()) {
-            newRecipe.setFood(optionalFood.get()); // Set the Food object
-        } else {
-            throw new ResourceNotFoundException("Food not found for ID: " + recipe.getId().getFoodId());
-        }
-
-        Optional<Ingredient> optionalIngredient = ingredientService.findIngredientById(recipe.getId().getIngredientId());
-        if (optionalIngredient.isPresent()) {
-            newRecipe.setIngredient(optionalIngredient.get()); // Set the Ingredient object
-        } else {
-            throw new ResourceNotFoundException("Ingredient not found for ID: " + recipe.getId().getIngredientId());
-        }
-
-        return recipeRepository.save(newRecipe);
+    public void createRecipes(IngredientQtyRequest ingredients, Food createdFood) {
+        ingredients.getIngredientMap().forEach(ingredient -> {
+            ingredientService.findIngredientById(ingredient.getId()).ifPresentOrElse(
+                    optionalIngredient -> {
+                        Recipe recipe = new Recipe();
+                        recipe.setId(new RecipeKey(createdFood.getId(), ingredient.getId()));
+                        recipe.setQty(ingredient.getQuantity());
+                        recipe.setIngredient(optionalIngredient);
+                        recipe.setFood(createdFood);
+                        this.createRecipe(recipe);
+                    },
+                    () -> {
+                        throw new RuntimeException("Ingredient with ID " + ingredient.getId() + " not found.");
+                    }
+            );
+        });
     }
 
     public List<Recipe> getAllRecipes() {

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import ingredientApi from '@/api/ingredientApi'
-import router from '@/router';
+import router from '@/router'
 
 // Utility function to format the date to dd-mm-yy
 const formatDateToDDMMYY = (dateStr) => {
@@ -84,8 +84,8 @@ const goBack = () => {
         <main
             class="ml-[14rem] w-full py-4 px-8 flex-col gap-4 bg-gray-50 h-screen"
         >
-                    <!-- Back button -->
-                    <div
+            <!-- Back button -->
+            <div
                 class="flex bg-[#C7C7C7FF] text-white rounded-lg px-3 py-2 w-10 mb-4"
                 @click="goBack"
             >
@@ -93,8 +93,9 @@ const goBack = () => {
                     <fa icon="arrow-left" />
                 </button>
             </div>
-            <section class="items-center justify-center flex-col w-10/12 h-12 mx-auto">
-
+            <section
+                class="items-center justify-center flex-col w-10/12 h-12 mx-auto"
+            >
                 <h2 class="text-4xl font-bold mb-4">Add New Ingredient</h2>
                 <form
                     @submit.prevent="submitIngredient"
@@ -113,7 +114,9 @@ const goBack = () => {
                     </div>
 
                     <div>
-                        <label for="amount" class="block font-semibold mb-1 pt-3"
+                        <label
+                            for="amount"
+                            class="block font-semibold mb-1 pt-3"
                             >Amount</label
                         >
                         <input
@@ -139,7 +142,9 @@ const goBack = () => {
                     </div>
 
                     <div>
-                        <label for="status" class="block font-semibold mb-1 pt-3"
+                        <label
+                            for="status"
+                            class="block font-semibold mb-1 pt-3"
                             >Status</label
                         >
                         <select
@@ -153,7 +158,9 @@ const goBack = () => {
                     </div>
 
                     <div>
-                        <label for="expireDate" class="block font-semibold mb-1 pt-3"
+                        <label
+                            for="expireDate"
+                            class="block font-semibold mb-1 pt-3"
                             >Expiration Date</label
                         >
                         <input
@@ -189,13 +196,13 @@ const goBack = () => {
                     </div>
                     <div class="flex items-center justify-center">
                         <button
-                        type="submit"
-                        class="w-3/6 mt-4 bg-yellow-300 text- p-2 rounded shadow-md transition-transform"
-                        onmouseover="this.style.transform='scale(1.05)'" 
-                        onmouseout="this.style.transform='scale(1)'"
-                    >
-                        Add Ingredient
-                    </button>
+                            type="submit"
+                            class="w-3/6 mt-4 bg-yellow-300 text- p-2 rounded shadow-md transition-transform"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'"
+                        >
+                            Add Ingredient
+                        </button>
                     </div>
                 </form>
             </section>

@@ -1,95 +1,88 @@
 package ku.cs.restaurant.controller;
 
+import ku.cs.restaurant.dto.ApiResponse;
+import ku.cs.restaurant.dto.food.FoodCreateRequest;
 import ku.cs.restaurant.dto.food.FoodDeleteDto;
-import org.springframework.web.multipart.MultipartFile;
+import ku.cs.restaurant.dto.recipe.IngredientQtyRequest;
 import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.service.FoodService;
+import ku.cs.restaurant.service.ImageService;
+import ku.cs.restaurant.service.IngredientService;
+import ku.cs.restaurant.service.RecipeService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RestController
 public class FoodController {
     private final FoodService service;
+    private final RecipeService recipeService;
+    private final FoodService foodService;
+    private final ImageService imageService;
 
-    public FoodController(FoodService service) {
+    public FoodController(FoodService service, RecipeService recipeService, IngredientService ingredientService, FoodService foodService, ImageService imageService) {
         this.service = service;
+        this.recipeService = recipeService;
+        this.foodService = foodService;
+        this.imageService = imageService;
     }
 
-    // สร้างเมนูใหม่
     @PostMapping("/foods")
-    public ResponseEntity<Food> createMenu(@RequestPart("food") Food food, @RequestPart("image") MultipartFile image) {
+    @Transactional
+    public ResponseEntity<ApiResponse<Food>> createMenu(@RequestPart("food") FoodCreateRequest foodCreateRequest,
+                                                        @RequestPart("ingredients") IngredientQtyRequest ingredients,
+                                                        @RequestPart("image") MultipartFile image) {
         try {
-            String imagePath = saveImage(image);
-            food.setImagePath(imagePath); // set path ในผลิตภัณฑ์
-
+            String imagePath = imageService.saveImage("src/main/resources/images/foods", image);
+            Food food = foodService.createFoodEntity(foodCreateRequest, imagePath);
             Food createdFood = service.createFood(food);
-            return new ResponseEntity<>(createdFood, HttpStatus.CREATED);
+            recipeService.createRecipes(ingredients, createdFood);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Food created successfully.", createdFood));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, "Failed to save image: " + e.getMessage(), null));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "Data integrity violation: " + e.getMessage(), null));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "An error occurred: " + e.getMessage(), null));
         }
     }
 
-    private String saveImage(MultipartFile image) throws IOException {
-        String folderPath = "src/main/resources/images/foods";
-        File dir = new File(folderPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path path = Paths.get(folderPath, fileName);
-        Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-        return path.toString();
-    }
-
-    // ดูตามสถานะ
     @GetMapping("/foods/status/{status}")
-    public ResponseEntity<List<Food>> getByStatus(@PathVariable String status) {
+    public ResponseEntity<ApiResponse<List<Food>>> getByStatus(@PathVariable String status) {
         try {
             Status productStatus = Status.valueOf(status.toUpperCase());
             List<Food> foods = service.getFoodsByStatus(productStatus);
-            return new ResponseEntity<>(foods, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Foods retrieved successfully.", foods));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "Invalid status value.", null));
         }
     }
 
-    // ดูทั้งหมด
     @GetMapping("/foods")
-    public ResponseEntity<List<Food>> getAll() {
+    public ResponseEntity<ApiResponse<List<Food>>> getAll() {
         List<Food> foods = service.getAllFoods();
         String imageBaseUrl = "http://localhost:8088/images/foods/";
-
-        for (Food food : foods) {
-            String imagePath = food.getImagePath().replace("\\", "/");
-
-            String fileName = imagePath.substring(imagePath.lastIndexOf("/") + 1);
-
-            food.setImagePath(imageBaseUrl + fileName);
-        }
-
-        return new ResponseEntity<>(foods, HttpStatus.OK);
+        foods.forEach(food -> food.setImagePath(imageBaseUrl + Paths.get(food.getImagePath()).getFileName()));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Foods retrieved successfully.", foods));
     }
 
-    // ลบอาหาร
     @DeleteMapping("/foods")
-    public ResponseEntity<Void> deleteMenu(@RequestBody FoodDeleteDto deleteDto) {
+    public ResponseEntity<ApiResponse<Void>> deleteMenu(@RequestBody FoodDeleteDto deleteDto) {
         try {
             service.deleteFoodById(deleteDto.getId());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse<>(true, "Food deleted " +
+                    "successfully.",
+                    null));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, "Food not found.", null));
         }
     }
 }

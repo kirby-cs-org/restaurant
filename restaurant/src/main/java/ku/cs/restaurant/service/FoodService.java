@@ -1,5 +1,6 @@
 package ku.cs.restaurant.service;
 
+import ku.cs.restaurant.dto.food.FoodCreateRequest;
 import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
 import ku.cs.restaurant.repository.FoodRepository;
@@ -35,5 +36,14 @@ public class FoodService {
 
     public void deleteFoodById(UUID id) {
         foodRepository.deleteById(id);
+    }
+
+    public Food createFoodEntity(FoodCreateRequest request, String imagePath) {
+        Food food = new Food();
+        food.setName(request.getName());
+        food.setPrice(request.getPrice());
+        food.setStatus(request.getStatus());
+        food.setImagePath(imagePath);
+        return food;
     }
 }

@@ -8,74 +8,62 @@ import userApi from '@/api/userApi'
 import router from '@/router'
 
 const orders = ref([])
-const role = ref([])
-const user = ref([])
-const userOrder = ref([])
-
+const role = ref('')
+const user = ref({})
 const dropdownVisible = ref(false)
-const selectedOption = ref('')
+const selectedOption = ref('All Orders')
 const searchQuery = ref('')
 
+// Fetch orders and user data
 const fetchOrders = async () => {
     try {
-        const orderResponse = await orderApi.getOrders()
-        const userResponse = await userApi.getUserByJwt()
+        const { data: orderResponse } = await orderApi.getOrders()
+        const { data: userResponse } = await userApi.getUserByJwt()
 
         user.value = userResponse.data
         role.value = userResponse.data.role
+        const loggedInUserId = user.value.id
 
-        const loggedInUserId = userResponse.data.id
-
-        if (role.value === 'ADMIN') {
-            orders.value = orderResponse.data
-        } else if (role.value === 'CUSTOMER') {
-            const userOrderPromises = orderResponse.data.map(async (order) => {
-                const userOrderResponse = await orderApi.getOrderUserById(
-                    order.id
-                )
-                return {
-                    ...order,
-                    user_id: userOrderResponse.data.id,
-                }
-            })
-            const userOrders = await Promise.all(userOrderPromises)
-            orders.value = userOrders.filter(
-                (order) => order.user_id === loggedInUserId
-            )
-        }
+        // Filter orders based on user role
+        orders.value =
+            role.value === 'ADMIN'
+                ? orderResponse.data
+                : orderResponse.data.filter(
+                      (order) => order.user_id === loggedInUserId
+                  )
     } catch (error) {
         console.error('Error fetching orders:', error)
     }
 }
 
-onMounted(() => {
-    fetchOrders()
-})
+// Lifecycle hook to fetch orders on component mount
+onMounted(fetchOrders)
 
+// Toggle dropdown visibility
 const toggleDropdown = () => {
     dropdownVisible.value = !dropdownVisible.value
 }
 
+// Select an option from the dropdown
 const selectOption = (option) => {
     selectedOption.value = option
     dropdownVisible.value = false
 }
 
+// Filter orders based on selected option and search query
 const filteredOrders = computed(() => {
-    let filtered = orders.value
-    if (selectedOption.value && selectedOption.value !== 'All Orders') {
-        filtered = filtered.filter(
-            (order) => order.status === selectedOption.value
-        )
-    }
-    if (searchQuery.value) {
-        filtered = filtered.filter((order) =>
-            order.user.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
-    }
-    return filtered
+    return orders.value.filter((order) => {
+        const matchesStatus =
+            selectedOption.value === 'All Orders' ||
+            order.status === selectedOption.value
+        const matchesSearch = searchQuery.value
+            ? order.user.toLowerCase().includes(searchQuery.value.toLowerCase())
+            : true
+        return matchesStatus && matchesSearch
+    })
 })
 
+// Handle order success status update
 const handleOrderSuccess = async (orderId) => {
     const order = orders.value.find((o) => o.id === orderId)
     if (order) {
@@ -88,6 +76,7 @@ const handleOrderSuccess = async (orderId) => {
     }
 }
 
+// Navigate to order detail page
 const handleViewDetail = (orderId) => {
     router.push({ name: 'receipt', params: { id: orderId } })
 }
@@ -117,7 +106,7 @@ const handleViewDetail = (orderId) => {
                     @click="toggleDropdown"
                     class="flex px-2 cursor-pointer gap-2 text-gray-500"
                 >
-                    {{ selectedOption || 'All Orders' }}
+                    {{ selectedOption }}
                     <fa icon="sort-down" />
                 </button>
                 <ul

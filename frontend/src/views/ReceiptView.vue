@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import receiptApi from '@/api/receiptApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import { ref, onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 
 const b_total = ref('')
 const b_id = ref('')
@@ -18,9 +18,15 @@ const goBack = () => {
 onMounted(async () => {
     try {
         const route = useRoute()
-        const responseOrder = await receiptApi.getReceiptById(route.params.id)
-        const responseUser = await receiptApi.getUserById(route.params.id)
-        const responseFood = await receiptApi.getFoodById(route.params.id)
+        const { data: responseOrder } = await receiptApi.getReceiptById(
+            route.params.id
+        )
+        const { data: responseUser } = await receiptApi.getUserById(
+            route.params.id
+        )
+        const { data: responseFood } = await receiptApi.getFoodById(
+            route.params.id
+        )
 
         b_total.value = responseOrder.data.total
         b_id.value = responseOrder.data.id
@@ -69,7 +75,7 @@ onMounted(async () => {
                             <li
                                 v-for="item in foodList"
                                 class="flex justify-between"
-                                >
+                            >
                                 <p>{{ item.qty }} * {{ item.food.name }}</p>
                                 <p>{{ item.food.price * item.qty }} B</p>
                             </li>
@@ -95,7 +101,7 @@ onMounted(async () => {
                         <!-- Total -->
                         <div class="flex justify-between mb-2">
                             <p>Total:</p>
-                            <p>{{ (b_total * 0.07) + b_total}}</p>
+                            <p>{{ b_total * 0.07 + b_total }}</p>
                         </div>
 
                         <hr

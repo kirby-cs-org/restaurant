@@ -53,8 +53,8 @@
 
 <script setup>
 import orderApi from '@/api/orderApi'
-import { ref, onMounted} from 'vue'
-import router from '@/router';
+import { ref, onMounted } from 'vue'
+import router from '@/router'
 
 const props = defineProps({
     order: {
@@ -66,10 +66,9 @@ const props = defineProps({
 
 const username = ref('')
 
-
 const getUsernameById = async (id) => {
     try {
-        const res = await orderApi.getOrderUserById(id)
+        const { data: res } = await orderApi.getOrderUserById(id)
         console.log(res.data.username)
         username.value = res.data.username
     } catch (error) {
@@ -87,11 +86,11 @@ const markOrderSuccess = (id) => {
 }
 
 const viewOrderDetail = () => {
-router.push({
-  name: 'receipt',
-  params: { 
-    id: props.order.id}
-})
-
+    router.push({
+        name: 'receipt',
+        params: {
+            id: props.order.id,
+        },
+    })
 }
 </script>

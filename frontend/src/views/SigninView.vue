@@ -54,7 +54,7 @@ const login = async () => {
     errorMessage.value = ''
 
     try {
-        const response = await authApi.signIn({
+        const { data: response } = await authApi.signIn({
             username: username.value,
             password: password.value,
         })
