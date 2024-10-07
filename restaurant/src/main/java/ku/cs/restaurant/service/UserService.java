@@ -4,8 +4,7 @@ import ku.cs.restaurant.dto.user.SignupRequest;
 import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import ku.cs.restaurant.dto.ApiResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +22,13 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<SignupResponse> createUser(SignupRequest user) {
+    public ApiResponse<SignupResponse> createUser(SignupRequest user) {
         SignupResponse signupResponse = new SignupResponse();
         Optional<User> existedUser = userRepository.findByUsername(user.getUsername());
 
         if (existedUser.isPresent()) {
             signupResponse.setMessage("Username already exists");
-            return new ResponseEntity<>(signupResponse, HttpStatus.CONFLICT);
+            return new ApiResponse<>(false, signupResponse.getMessage(), signupResponse);
         }
 
         String username = user.getUsername();
@@ -40,7 +39,7 @@ public class UserService {
 
         if (!password.equals(confirmPassword)) {
             signupResponse.setMessage("Passwords do not match");
-            return new ResponseEntity<>(signupResponse, HttpStatus.BAD_REQUEST);
+            return new ApiResponse<>(false, signupResponse.getMessage(), signupResponse);
         }
 
         String encodedPassword = passwordEncoder.encode(password);
@@ -54,7 +53,7 @@ public class UserService {
         userRepository.save(newUser);
 
         signupResponse.setMessage("User created");
-        return new ResponseEntity<>(signupResponse, HttpStatus.CREATED);
+        return new ApiResponse<>(true, signupResponse.getMessage(), signupResponse);
     }
 
     public List<User> getAllCustomers() {
@@ -69,4 +68,3 @@ public class UserService {
         return userRepository.findById(id);
     }
 }
-

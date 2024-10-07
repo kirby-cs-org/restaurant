@@ -73,7 +73,7 @@ const register = async () => {
     }
 
     try {
-        const response = await authApi.signUp({
+        const { data: response } = await authApi.signUp({
             username: username.value,
             password: password.value,
             confirmPassword: confirmPassword.value,

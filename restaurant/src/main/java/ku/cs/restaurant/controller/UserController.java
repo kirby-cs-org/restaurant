@@ -1,6 +1,6 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.user.SigninResponse;
+import ku.cs.restaurant.dto.ApiResponse;
 import ku.cs.restaurant.dto.user.UserResponse;
 import ku.cs.restaurant.entity.User;
 import ku.cs.restaurant.service.UserService;
@@ -25,30 +25,33 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
         List<User> customers = new ArrayList<>(userService.getAllCustomers());
-
-        return new ResponseEntity<>(customers, HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Users retrieved successfully.", customers));
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable UUID id) {
         Optional<User> optionalUser = userService.getUserById(id);
-        return optionalUser.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return optionalUser.map(user -> ResponseEntity.ok(new ApiResponse<>(true, "User retrieved successfully.", user)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>(false, "User not found.", null)));
     }
 
     @GetMapping("/user/jwt")
-    public UserResponse getUsernameByJwt(@RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUsernameByJwt(@RequestHeader("Authorization") String jwt) {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         Optional<User> optionalUser = userService.getUserByUsername(username);
         UserResponse res = new UserResponse();
         if (optionalUser.isPresent()) {
-            res.setUsername(optionalUser.get().getUsername());
-            res.setId(optionalUser.get().getId());
-            res.setRole(optionalUser.get().getRole());
-            res.setPhone(optionalUser.get().getPhone());
+            User user = optionalUser.get();
+            res.setUsername(user.getUsername());
+            res.setId(user.getId());
+            res.setRole(user.getRole());
+            res.setPhone(user.getPhone());
+            return ResponseEntity.ok(new ApiResponse<>(true, "User details retrieved successfully.", res));
         }
-        return res;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, "User not found.", null));
     }
 }
-

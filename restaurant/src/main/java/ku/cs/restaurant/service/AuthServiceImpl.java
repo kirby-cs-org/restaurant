@@ -3,6 +3,7 @@ package ku.cs.restaurant.service;
 import ku.cs.restaurant.dto.user.SigninRequest;
 import ku.cs.restaurant.dto.user.SigninResponse;
 import ku.cs.restaurant.utils.JwtUtils;
+import ku.cs.restaurant.dto.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<SigninResponse> signIn(SigninRequest signinRequest) {
+    public ApiResponse<SigninResponse> signIn(SigninRequest signinRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -47,10 +48,10 @@ public class AuthServiceImpl implements AuthService {
             signinResponse.setRole(userDetails.getRole());
 
             tokenLogger.info("User {} signed in successfully", userDetails.getUsername());
-            return ResponseEntity.ok(signinResponse);
+            return new ApiResponse<>(true, "Sign-in successful.", signinResponse);
         } catch (Exception e) {
             tokenLogger.error("Failed to sign in user {}: {}", signinRequest.getUsername(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return new ApiResponse<>(false, "Sign-in failed: " + e.getMessage(), null);
         }
     }
 }

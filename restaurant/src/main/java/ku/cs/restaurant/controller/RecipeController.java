@@ -1,11 +1,10 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.recipe.CreateRequest;
+import ku.cs.restaurant.dto.ApiResponse;
 import ku.cs.restaurant.dto.recipe.UpdateQtyRequest;
 import ku.cs.restaurant.entity.Recipe;
 import ku.cs.restaurant.entity.RecipeKey;
 import ku.cs.restaurant.service.RecipeService;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,62 +20,55 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    // Create a new recipe
-    @PostMapping("/recipe")
-    public ResponseEntity<Recipe> createRecipe(@RequestBody CreateRequest recipe) {
-        try {
-            Recipe createdRecipe = recipeService.createRecipe(recipe);
-            return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     // Get all recipes
     @GetMapping("/recipe")
-    public ResponseEntity<List<Recipe>> getAllRecipes() {
+    public ResponseEntity<ApiResponse<List<Recipe>>> getAllRecipes() {
         try {
             List<Recipe> recipes = recipeService.getAllRecipes();
-            return new ResponseEntity<>(recipes, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Recipes retrieved successfully.", recipes));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to retrieve recipes.", null));
         }
     }
 
     // Get recipe by ID using request body
     @PostMapping("/recipe/getById")
-    public ResponseEntity<Recipe> getRecipeById(@RequestBody RecipeKey id) {
+    public ResponseEntity<ApiResponse<Recipe>> getRecipeById(@RequestBody RecipeKey id) {
         try {
             Optional<Recipe> recipe = recipeService.getRecipeById(id);
-            return recipe.map(ResponseEntity::ok)
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            return recipe.map(r -> ResponseEntity.ok(new ApiResponse<>(true, "Recipe retrieved successfully.", r)))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ApiResponse<>(false, "Recipe not found.", null)));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to retrieve recipe.", null));
         }
     }
 
     // Update a recipe using request body
     @PatchMapping("/recipe")
-    public ResponseEntity<Optional<Recipe>> updateRecipe(@RequestBody UpdateQtyRequest updateQtyRequest) {
+    public ResponseEntity<ApiResponse<Recipe>> updateRecipe(@RequestBody UpdateQtyRequest updateQtyRequest) {
         try {
             Optional<Recipe> updatedRecipe = recipeService.updateRecipe(updateQtyRequest.getId(), updateQtyRequest.getQty());
-            return new ResponseEntity<>(updatedRecipe, HttpStatus.OK);
+            return updatedRecipe.map(recipe -> ResponseEntity.ok(new ApiResponse<>(true, "Recipe updated successfully.", recipe)))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ApiResponse<>(false, "Recipe not found.", null)));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to update recipe.", null));
         }
     }
 
     // Delete a recipe using request body
     @DeleteMapping("/recipe/delete")
-    public ResponseEntity<Void> deleteRecipe(@RequestBody RecipeKey id) {
+    public ResponseEntity<ApiResponse<Void>> deleteRecipe(@RequestBody RecipeKey id) {
         try {
             recipeService.deleteRecipe(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Recipe deleted successfully.", null));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(false, "Recipe not found.", null));
         }
     }
 }
-

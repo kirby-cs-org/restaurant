@@ -8,6 +8,7 @@ import ku.cs.restaurant.dto.user.SignupResponse;
 import ku.cs.restaurant.exception.UserRegistrationException;
 import ku.cs.restaurant.service.AuthService;
 import ku.cs.restaurant.service.UserService;
+import ku.cs.restaurant.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,22 +27,32 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         try {
-            return userService.createUser(signupRequest);
+            ApiResponse<SignupResponse> signupResponse = userService.createUser(signupRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
+        } catch (UserRegistrationException e) {
+            return handleUserRegistrationException(e);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage(), null));
         }
     }
 
     @ExceptionHandler(UserRegistrationException.class)
-    public ResponseEntity<String> handleUserRegistrationException(UserRegistrationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<ApiResponse<SignupResponse>> handleUserRegistrationException(UserRegistrationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
     @PostMapping("/auth/signin")
-    public ResponseEntity<SigninResponse> signin(@RequestBody SigninRequest signinRequest) {
-        return authService.signIn(signinRequest);
+    public ResponseEntity<ApiResponse<SigninResponse>> signin(@RequestBody SigninRequest signinRequest) {
+        try {
+            ApiResponse<SigninResponse> signinResponse = authService.signIn(signinRequest);
+            return ResponseEntity.ok(signinResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(false, "Sign-in failed: " + e.getMessage(), null));
+        }
     }
-
 }

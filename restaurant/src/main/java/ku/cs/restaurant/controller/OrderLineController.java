@@ -1,18 +1,13 @@
 package ku.cs.restaurant.controller;
 
-import ku.cs.restaurant.dto.orderLine.CreateRequest;
-import ku.cs.restaurant.entity.Order;
+import ku.cs.restaurant.dto.ApiResponse;
 import ku.cs.restaurant.entity.OrderLine;
-import ku.cs.restaurant.entity.Receipt;
 import ku.cs.restaurant.service.OrderLineService;
-import ku.cs.restaurant.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
-
 
 @RestController
 public class OrderLineController {
@@ -22,26 +17,25 @@ public class OrderLineController {
         this.service = service;
     }
 
-
     @GetMapping("/order_line")
-    public ResponseEntity<List<OrderLine>> getAllOrderLine() {
+    public ResponseEntity<ApiResponse<List<OrderLine>>> getAllOrderLine() {
         try {
             List<OrderLine> orderLines = service.findOrderLine();
-            return new ResponseEntity<>(orderLines, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Order lines fetched successfully.", orderLines));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage(), null));
         }
     }
 
-
     @PatchMapping("/order_line/quantity")
-    public ResponseEntity<OrderLine> updateQty(@RequestBody OrderLine orderLine) {
+    public ResponseEntity<ApiResponse<OrderLine>> updateQty(@RequestBody OrderLine orderLine) {
         try {
             OrderLine updatedOrderLine = service.updateQuantity(orderLine);
-            return new ResponseEntity<>(updatedOrderLine, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Order line quantity updated successfully.", updatedOrderLine));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage(), null));
         }
     }
 }
-

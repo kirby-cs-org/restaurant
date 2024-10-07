@@ -1,5 +1,6 @@
 package ku.cs.restaurant.controller;
 
+import ku.cs.restaurant.dto.ApiResponse;
 import ku.cs.restaurant.entity.Receipt;
 import ku.cs.restaurant.service.ReceiptService;
 import org.springframework.http.HttpStatus;
@@ -19,18 +20,17 @@ public class ReceiptController {
     }
 
     @GetMapping("/receipt")
-    public ResponseEntity<List<Receipt>> getReceipts() {
+    public ResponseEntity<ApiResponse<List<Receipt>>> getReceipts() {
         List<Receipt> receipts = service.getAllReceipts();
-        return new ResponseEntity<>(receipts, HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Receipts retrieved successfully.", receipts));
     }
 
     @GetMapping("/receipt/{id}")
-    public ResponseEntity<Receipt> getReceiptById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Receipt>> getReceiptById(@PathVariable UUID id) {
         Optional<Receipt> optionalReceipt = service.getReceiptById(id);
-        if (optionalReceipt.isPresent()) {
-            return new ResponseEntity<>(optionalReceipt.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return optionalReceipt.map(receipt ->
+                        ResponseEntity.ok(new ApiResponse<>(true, "Receipt retrieved successfully.", receipt)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>(false, "Receipt not found.", null)));
     }
 }
