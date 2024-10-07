@@ -2,42 +2,46 @@
 import Sidebar from '@/components/Sidebar.vue';
 import receiptApi from '@/api/receiptApi';
 import router from '@/router'
+import { useRoute } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
 
-// สร้าง reactive state
-import { ref, onMounted } from 'vue';
-
+// Reactive state
 const b_total = ref('');
 const b_id = ref('');
 const created_at = ref('');
 const username = ref('');
-const formattedDate = ref('');
+const foodList = ref([]);
 
+// Computed subtotal based on foodList prices
+const sub_total = computed(() => {
+  return foodList.value.reduce((acc, item) => acc + item.price, 0).toFixed(2);
+});
+
+// Navigation to go back
 const goBack = () => {
-    router.push('/food')
+  router.push('/food')
 }
 
 onMounted(async () => {
   try {
-    const receiptId = "123456789"; // รับค่า ID จาก params หรือ state
-    const response = await receiptApi.getReceiptById(receiptId); // เรียก API
+    const route = useRoute();
+    const responseOrder = await receiptApi.getReceiptById(route.params.id); 
+    const responseUser = await receiptApi.getUserById(route.params.id);
+    const responseFood = await receiptApi.getFoodById(route.params.id);
 
-    // บันทึกข้อมูลที่ดึงมาใน state
-    b_total.value = response.data.total;
-    b_id.value = response.data.id;
-    created_at.value = new Date(response.data.created_at).toLocaleString("en-US", {
-      weekday: "short",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-    });
-    username.value = response.data.username;
+    b_total.value = responseOrder.data.total;
+    b_id.value = responseOrder.data.id;
+    created_at.value = responseOrder.data.createdAt;
+    username.value = responseUser.data.username;
+    foodList.value = responseFood.data.foods;
+    
   } catch (error) {
     console.error("Error fetching receipt:", error);
   }
 });
+
+console.log(foodList)
+
 </script>
 
 <template>
@@ -53,73 +57,60 @@ onMounted(async () => {
           <fa icon="arrow-left" />
         </button>
       </div>
-      
-      <div class="flex justify-center h-5/6 relative ">
+       
+      <div class="flex justify-center h-5/6 relative">
         <!-- Receipt -->
         <div class="w-4/6 p-10 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD]">
-        <h1 class="text-center text-3xl mb-4">SuperDuper Restaurant</h1>
-        <p class="text-center">{{ formattedDate }}</p>
+          <h1 class="text-center text-3xl mb-4">SuperDuper Restaurant</h1>
 
-        <hr class="my-2 border-1 border-dashed border-gray-400 " />
-
-        <!-- Items -->
-        <div class="flex justify-between mb-2">
-          <p>Tam thai</p>
-          <p>$15.10</p>
-        </div>
-        <div class="flex justify-between mb-2">
-          <p>Fried Rice with pork</p>
-          <p>$17</p>
-        </div>
-        <div class="flex justify-between mb-2">
-          <p>Pad Kaprao</p>
-          <p>$23.25</p>
-        </div>
-        <div class="flex-col justify-between content-bottom bottom-10">
           <hr class="my-2 border-1 border-dashed border-gray-400" />
 
-        <!-- Subtotal -->
-        <div class="flex justify-between mb-2">
-          <p>Subtotal:</p>
-          <p>$55.35</p>
-        </div>
+          <!-- Items -->
+          <div v-for="item in foodList" :key="item.id" class="flex justify-between mb-2">
+            {{ item.name }}
+            <p>{{ item.price }}</p>
+          </div>
+          <div class="flex-col justify-between">
+            <hr class="my-2 border-1 border-dashed border-gray-400" />
 
-        <!-- Ref Number -->
-        <div class="flex justify-between mb-2">
-          <p>Ref. Number:</p>
-          <p>$0.57</p>
-        </div>
+            <!-- Subtotal -->
+            <div class="flex justify-between mb-2">
+              <p>Subtotal:</p>
+              <p>{{ sub_total }}</p>
+            </div>
 
-        <!-- Total -->
-        <div class="flex mb-2">
-          <p>Total:</p>
-          <p>{{ b_total }}</p>
-        </div>
-        <hr class="my-2 border-1 border-dashed border-gray-400" />
+            <!-- Total -->
+            <div class="flex justify-between mb-2">
+              <p>Total:</p>
+              <p>{{ b_total }}</p>
+            </div>
 
-        <!-- Reference -->
-        <div class="flex justify-between mb-2">
-          <p>Ref. ID</p>
-          <p>{{ b_id }}</p>
-        </div>
+            <hr class="my-2 border-1 border-dashed border-gray-400" />
 
-        <!-- Payment Time -->
-        <div class="flex justify-between mb-2">
-          <p>Payment Time</p>
-          <p>{{ created_at }}</p>
-        </div>
+            <!-- Reference -->
+            <div class="flex justify-between mb-2">
+              <p>Ref. ID</p>
+              <p>{{ b_id }}</p>
+            </div>
 
-        <!-- Customer Name -->
-        <div class="flex justify-between mb-2">
-          <p>Customer Name</p>
-          <p>{{ username }}</p>
-        </div>
+            <!-- Payment Time -->
+            <div class="flex justify-between mb-2">
+              <p>Payment Time</p>
+              <p>{{ created_at }}</p>
+            </div>
 
-        <p class="text-center mt-5 ">Thank you for your purchase. Enjoy your meal! :D</p>
+            <!-- Customer Name -->
+            <div class="flex justify-between mb-2">
+              <p>Customer Name</p>
+              <p>{{ username }}</p>
+            </div>
+
+            <hr class="my-2 border-1 border-dashed border-gray-400" />
+
+            <p class="text-center mt-5">Thank you for your purchase. Enjoy your meal! :D</p>
+          </div>
         </div>
       </div>
-      </div>
-      
     </main>
   </div>
 </template>

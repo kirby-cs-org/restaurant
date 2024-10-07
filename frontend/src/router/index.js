@@ -37,7 +37,7 @@ const routes = [
         component: IngredientView,
     },
     {
-        path: '/receipt',
+        path: '/receipt/:id',
         name: 'receipt',
         component: ReceiptView,
     },

@@ -4,6 +4,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import Search from '@/components/Search.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import orderApi from '@/api/orderApi'
+import router from '@/router'
 
 const orders = ref([])
 const dropdownVisible = ref(false)
@@ -60,7 +61,7 @@ const handleOrderSuccess = async (orderId) => {
 }
 
 const handleViewDetail = (orderId) => {
-    console.log('View details for order:', orderId)
+    router.push({name: 'receipt', params: {id:orderId}})
 }
 </script>
 

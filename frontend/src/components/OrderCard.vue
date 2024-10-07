@@ -15,7 +15,7 @@
     <button class="px-10 py-2 mt-2 mr-10 rounded-lg" style="background-color: #BCF14A; color: #000000;" @click="markOrderSuccess(order.id)">
         Mark as Success
     </button>
-    <button class="px-12 py-2 mt-2 rounded-lg" style="background-color: #F6F6F6; color: #000000;" @click="viewOrderDetail(order.id)">
+    <button class="px-12 py-2 mt-2 rounded-lg" style="background-color: #F6F6F6; color: #000000;" @click="viewOrderDetail()">
         View Details
     </button>
 </span>
@@ -30,9 +30,9 @@
 
 <script setup>
 import orderApi from '@/api/orderApi'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted} from 'vue'
+import router from '@/router';
 
-// Props
 const props = defineProps({
     order: {
         type: Object,
@@ -41,14 +41,13 @@ const props = defineProps({
     index: Number,
 })
 
-// Username state
 const username = ref('')
-// Fetch the username when the component is mounted
+
 const getUsernameById = async (id) => {
     try {
         const res = await orderApi.getOrderUserById(id)
         console.log(res.data.username)
-        username.value = res.data.username // Update the username correctly
+        username.value = res.data.username
     } catch (error) {
         console.error('Error fetching username:', error)
     }
@@ -57,17 +56,18 @@ onMounted(() => {
     getUsernameById(props.order.id)
 })
 
-// Emit events to parent component
 const emit = defineEmits(['mark-success', 'view-detail'])
 
-// Mark order as success
 const markOrderSuccess = (id) => {
     emit('mark-success', id)
 }
 
-// View order details
-const viewOrderDetail = (id) => {
-    emit('view-detail', id)
-}
+const viewOrderDetail = () => {
+router.push({
+  name: 'receipt',
+  params: { 
+    id: props.order.id}
+})
 
+}
 </script>
