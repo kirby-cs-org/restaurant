@@ -2,9 +2,6 @@ import axios from 'axios'
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:8088',
-    headers: {
-        'Content-Type': 'application/json',
-    },
 })
 
 apiClient.interceptors.request.use(
