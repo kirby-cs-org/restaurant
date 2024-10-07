@@ -14,9 +14,7 @@ const foodApi = {
     },
 
     createFood(foodData) {
-        return apiClient.post('/foods', foodData, {
-            headers: { 'Content-Type': 'application/json' },
-        })
+        return apiClient.post('/foods', foodData) // multipart/form-data
     },
 
     updateFood(foodId, foodData) {
