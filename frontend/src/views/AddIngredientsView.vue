@@ -137,6 +137,7 @@ const goBack = () => {
                             id="qty"
                             v-model="ingredientData.qty"
                             required
+                            min="0"
                             class="border p-2 rounded w-full"
                         />
                     </div>
