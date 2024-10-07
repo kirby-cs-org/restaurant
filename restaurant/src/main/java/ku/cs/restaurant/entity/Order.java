@@ -33,6 +33,9 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "payment_link", columnDefinition = "TEXT")
+    private String paymentLink;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<OrderLine> orderLines;

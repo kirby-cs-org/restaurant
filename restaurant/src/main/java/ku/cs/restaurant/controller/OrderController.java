@@ -105,19 +105,11 @@ public class OrderController {
                 // Create order lines and update ingredient quantities
                 for (FoodOrder foodOrder : foodOrders) {
                     orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
-
-//                    Food food = foodService.getFoodById(foodOrder.getFood().getId()).orElseThrow(() ->
-//                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
-//
-//                    for (Recipe recipe : food.getRecipes()) {
-//                        Ingredient ingredient = recipe.getIngredient();
-//                        int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
-//                        ingredientService.updateQty(ingredient.getId(), -ingredientUsedAmount);
-//                    }
                 }
 
                 // Create payment link
                 PaymentResponse response = paymentService.createPaymentLink(createdOrder);
+                orderService.addPaymentLink(createdOrder.getId() ,response.getPaymentLink());
                 return ResponseEntity.status(HttpStatus.CREATED)
                         .body(new ApiResponse<>(true, "Order created successfully.", response));
             } else {

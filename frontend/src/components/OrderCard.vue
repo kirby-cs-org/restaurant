@@ -30,11 +30,19 @@
             >
             <span class="py-2 pl-1">
                 <button
-                    class="px-10 py-2 mt-2 mr-10 rounded-lg"
+                    v-if="order.status === 'COMPLETE'"
+                    class="inline-block w-52 px-10 py-2 mt-2 mr-10 rounded-lg"
                     style="background-color: #bcf14a; color: #000000"
                     @click="markOrderSuccess(order.id)"
                 >
                     Mark as Success
+                </button>
+                <button
+                    v-if="order.status === 'PENDING'"
+                    class="inline-block w-52 px-10 py-2 mt-2 mr-10 rounded-lg bg-yellow-400"
+                    @click="payAgain(order)"
+                >
+                    Pay Again
                 </button>
                 <button
                     class="px-12 py-2 mt-2 rounded-lg"
@@ -92,5 +100,10 @@ const viewOrderDetail = () => {
             id: props.order.id,
         },
     })
+}
+
+const payAgain = (order) => {
+    window.location.href = order.paymentLink
+    console.log(order)
 }
 </script>

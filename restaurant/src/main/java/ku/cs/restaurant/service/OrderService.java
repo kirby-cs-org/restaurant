@@ -52,4 +52,10 @@ public class OrderService {
 
         return optionalOrder;
     }
+
+    public void addPaymentLink(UUID id, String link) {
+        this.findOrderById(id).ifPresent(order -> {
+            order.setPaymentLink(link);
+        });
+    }
 }
