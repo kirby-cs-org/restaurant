@@ -13,7 +13,9 @@ import ku.cs.restaurant.utils.JwtUtils;
 import ku.cs.restaurant.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,69 +47,78 @@ public class OrderController {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<ApiResponse<PaymentResponse>> createOrder(@RequestBody OrderRequest orderRequest,
-                                                                    @RequestHeader("Authorization") String jwt) {
+    @Transactional
+    public ResponseEntity<ApiResponse<PaymentResponse>> createOrder(
+            @RequestBody OrderRequest orderRequest,
+            @RequestHeader("Authorization") String jwt) {
+
         try {
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
             Optional<User> optionalUser = userService.getUserByUsername(username);
 
+            // Check if the user exists
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
                 List<FoodOrder> foodOrders = orderRequest.getFoods();
 
+                // Check if food orders are provided
                 if (foodOrders.isEmpty()) {
                     return ResponseEntity.badRequest()
                             .body(new ApiResponse<>(false, "No food orders provided.", null));
                 }
 
+                // Validate each food order
                 for (FoodOrder foodOrder : foodOrders) {
                     UUID foodId = foodOrder.getFood().getId();
                     Optional<Food> optionalFood = foodService.getFoodById(foodId);
 
-                    if (optionalFood.isPresent()) {
-                        Food food = optionalFood.get();
-                        List<Recipe> recipes = food.getRecipes();
-
-                        if (recipes.isEmpty()) {
-                            return ResponseEntity.badRequest()
-                                    .body(new ApiResponse<>(false, "No recipes found for food: " + foodId, null));
-                        }
-
-                        for (Recipe recipe : recipes) {
-                            int ingredientRequiredQty = foodOrder.getQuantity() * recipe.getQty();
-                            int ingredientAvailableQty = recipe.getIngredient().getQty();
-
-                            if (ingredientRequiredQty > ingredientAvailableQty) {
-                                return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE)
-                                        .body(new ApiResponse<>(false, "Insufficient ingredient: " + recipe.getIngredient().getId() +
-                                                " | Required: " + ingredientRequiredQty + ", Available: " + ingredientAvailableQty, null));
-                            }
-                        }
-                    } else {
+                    // Check if the food exists
+                    if (!optionalFood.isPresent()) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(new ApiResponse<>(false, "Food not found for ID: " + foodId, null));
                     }
-                }
 
-                Receipt receipt = receiptService.createReceipt(orderRequest.calculateTotal());
-                Order createdOrder = orderService.createOrder(orderRequest.calculateTotal(), user, receipt);
+                    Food food = optionalFood.get();
+                    List<Recipe> recipes = food.getRecipes();
 
-                for (FoodOrder foodOrder : foodOrders) {
-                    orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
-                    UUID foodId = foodOrder.getFood().getId();
-                    Optional<Food> optionalFood = foodService.getFoodById(foodId);
+                    // Check if the food has recipes
+                    if (recipes.isEmpty()) {
+                        return ResponseEntity.badRequest()
+                                .body(new ApiResponse<>(false, "No recipes found for food: " + foodId, null));
+                    }
 
-                    if (optionalFood.isPresent()) {
-                        Food food = optionalFood.get();
-                        List<Recipe> recipes = food.getRecipes();
-                        for (Recipe recipe : recipes) {
-                            Ingredient ingredient = recipe.getIngredient();
-                            int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
-                            ingredientService.updateQty(ingredient.getId(), ingredient.getQty() - ingredientUsedAmount);
+                    // Validate ingredient availability
+                    for (Recipe recipe : recipes) {
+                        int ingredientRequiredQty = foodOrder.getQuantity() * recipe.getQty();
+                        int ingredientAvailableQty = recipe.getIngredient().getQty();
+
+                        if (ingredientRequiredQty > ingredientAvailableQty) {
+                            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE)
+                                    .body(new ApiResponse<>(false, "Insufficient ingredient: " + recipe.getIngredient().getId() +
+                                            " | Required: " + ingredientRequiredQty + ", Available: " + ingredientAvailableQty, null));
                         }
                     }
                 }
 
+                // Create receipt and order
+                Receipt receipt = receiptService.createReceipt(orderRequest.calculateTotal());
+                Order createdOrder = orderService.createOrder(orderRequest.calculateTotal(), user, receipt);
+
+                // Create order lines and update ingredient quantities
+                for (FoodOrder foodOrder : foodOrders) {
+                    orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
+
+                    Food food = foodService.getFoodById(foodOrder.getFood().getId()).orElseThrow(() ->
+                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
+
+                    for (Recipe recipe : food.getRecipes()) {
+                        Ingredient ingredient = recipe.getIngredient();
+                        int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
+                        ingredientService.updateQty(ingredient.getId(), ingredient.getQty() - ingredientUsedAmount);
+                    }
+                }
+
+                // Create payment link
                 PaymentResponse response = paymentService.createPaymentLink(createdOrder);
                 return ResponseEntity.status(HttpStatus.CREATED)
                         .body(new ApiResponse<>(true, "Order created successfully.", response));

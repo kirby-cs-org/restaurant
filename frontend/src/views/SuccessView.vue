@@ -1,6 +1,7 @@
 <script setup>
 import orderApi from '@/api/orderApi'
 import Sidebar from '@/components/Sidebar.vue'
+import router from '@/router'
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -25,6 +26,10 @@ onMounted(async () => {
         console.error('Order ID not found in the URL')
     }
 })
+
+const goToReceipt = () => {
+    router.push(`/receipt/${route.query.id}`)
+}
 </script>
 
 <template>
@@ -52,12 +57,12 @@ onMounted(async () => {
                     Thank you for your payment! Your order has been completed
                     successfully.
                 </p>
-                <router-link
-                    to="/receipt"
+                <button
+                    @click="goToReceipt()"
                     class="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow hover:bg-green-600 transition-all duration-200"
                 >
                     Check your receipt!
-                </router-link>
+                </button>
             </div>
         </main>
     </div>

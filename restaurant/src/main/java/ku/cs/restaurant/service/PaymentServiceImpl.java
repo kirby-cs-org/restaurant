@@ -22,6 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (order == null || order.getTotal() <= 0)
             throw new IllegalArgumentException("Invalid order: Order must not be null and total must be greater than zero.");
 
+        double total = (order.getTotal() + (order.getTotal() * 0.07)) * 100;
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PROMPTPAY)
@@ -32,7 +33,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .setQuantity(1L)
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                 .setCurrency("thb")
-                                .setUnitAmount((long) (order.getTotal() * 100)) // Ensure the total is in the smallest currency unit
+                                .setUnitAmount((long) total) // Ensure the total is in the
+                                // smallest currency unit
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                         .setName("Food price") // Capitalized product name
                                         .build())
