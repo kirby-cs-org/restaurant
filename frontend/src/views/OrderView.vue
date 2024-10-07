@@ -4,6 +4,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import Search from '@/components/Search.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import orderApi from '@/api/orderApi'
+import userApi from '@/api/userApi'
 import router from '@/router'
 
 const orders = ref([])
@@ -17,33 +18,35 @@ const searchQuery = ref('')
 
 const fetchOrders = async () => {
     try {
-        const orderResponse = await orderApi.getOrders();
-        const userResponse = await userApi.getUserByJwt();
+        const orderResponse = await orderApi.getOrders()
+        const userResponse = await userApi.getUserByJwt()
 
-        user.value = userResponse.data;
-        role.value = userResponse.data.role;
-        
-        const loggedInUserId = userResponse.data.id; 
+        user.value = userResponse.data
+        role.value = userResponse.data.role
+
+        const loggedInUserId = userResponse.data.id
 
         if (role.value === 'ADMIN') {
-            orders.value = orderResponse.data;
+            orders.value = orderResponse.data
         } else if (role.value === 'CUSTOMER') {
             const userOrderPromises = orderResponse.data.map(async (order) => {
-                const userOrderResponse = await orderApi.getOrderUserById(order.id);
+                const userOrderResponse = await orderApi.getOrderUserById(
+                    order.id
+                )
                 return {
                     ...order,
-                    user_id: userOrderResponse.data.id 
-                };
-            });
-            const userOrders = await Promise.all(userOrderPromises);
-            orders.value = userOrders.filter(order => order.user_id === loggedInUserId);
+                    user_id: userOrderResponse.data.id,
+                }
+            })
+            const userOrders = await Promise.all(userOrderPromises)
+            orders.value = userOrders.filter(
+                (order) => order.user_id === loggedInUserId
+            )
         }
-
     } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error('Error fetching orders:', error)
     }
 }
-
 
 onMounted(() => {
     fetchOrders()
@@ -73,8 +76,6 @@ const filteredOrders = computed(() => {
     return filtered
 })
 
-
-
 const handleOrderSuccess = async (orderId) => {
     const order = orders.value.find((o) => o.id === orderId)
     if (order) {
@@ -88,7 +89,7 @@ const handleOrderSuccess = async (orderId) => {
 }
 
 const handleViewDetail = (orderId) => {
-    router.push({name: 'receipt', params: {id:orderId}})
+    router.push({ name: 'receipt', params: { id: orderId } })
 }
 </script>
 
@@ -142,7 +143,6 @@ const handleViewDetail = (orderId) => {
             <!-- Order list -->
             <section class="mt-4">
                 <OrderCard
-        
                     v-for="(order, i) in filteredOrders"
                     :index="i + 1"
                     :key="order.id"
