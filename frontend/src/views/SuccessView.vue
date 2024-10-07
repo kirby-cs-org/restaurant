@@ -11,11 +11,15 @@ onMounted(async () => {
     const orderId = route.query.id
     if (orderId) {
         try {
-            const { data: res } = await orderApi.updateOrderStatus({
+            const { data: resStatus } = await orderApi.updateOrderStatus({
                 id: orderId,
                 status: 'COMPLETE',
             })
-            console.log('Order status updated:', res.data)
+            const { data: resQty } = await orderApi.updateOrderIngredientQty(
+                orderId
+            )
+            console.log('Order status updated:', resStatus.data)
+            console.log('Order qty updated', resQty.data)
         } catch (error) {
             console.error(
                 'Failed to update order status:',

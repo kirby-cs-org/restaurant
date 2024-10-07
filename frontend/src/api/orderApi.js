@@ -24,6 +24,12 @@ const orderApi = {
             headers: { 'Content-Type': 'application/json' },
         })
     },
+
+    updateOrderIngredientQty(orderId) {
+        return apiClient.post(`/order/ingredient/${orderId}`, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+    },
 }
 
 export default orderApi

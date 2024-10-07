@@ -3,14 +3,12 @@ package ku.cs.restaurant.controller;
 import ku.cs.restaurant.dto.Payment.PaymentResponse;
 import ku.cs.restaurant.dto.food.FoodDto;
 import ku.cs.restaurant.dto.food.FoodListDto;
-import ku.cs.restaurant.dto.order.FoodOrder;
-import ku.cs.restaurant.dto.order.OrderRequest;
-import ku.cs.restaurant.dto.order.UpdateStatusRequest;
-import ku.cs.restaurant.dto.order.UserResponse;
+import ku.cs.restaurant.dto.order.*;
 import ku.cs.restaurant.entity.*;
 import ku.cs.restaurant.service.*;
 import ku.cs.restaurant.utils.JwtUtils;
 import ku.cs.restaurant.dto.ApiResponse;
+import org.hibernate.sql.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,14 +106,14 @@ public class OrderController {
                 for (FoodOrder foodOrder : foodOrders) {
                     orderLineService.createOrderLine(foodOrder.getQuantity(), createdOrder, foodOrder.getFood());
 
-                    Food food = foodService.getFoodById(foodOrder.getFood().getId()).orElseThrow(() ->
-                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
-
-                    for (Recipe recipe : food.getRecipes()) {
-                        Ingredient ingredient = recipe.getIngredient();
-                        int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
-                        ingredientService.updateQty(ingredient.getId(), ingredient.getQty() - ingredientUsedAmount);
-                    }
+//                    Food food = foodService.getFoodById(foodOrder.getFood().getId()).orElseThrow(() ->
+//                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
+//
+//                    for (Recipe recipe : food.getRecipes()) {
+//                        Ingredient ingredient = recipe.getIngredient();
+//                        int ingredientUsedAmount = foodOrder.getQuantity() * recipe.getQty();
+//                        ingredientService.updateQty(ingredient.getId(), -ingredientUsedAmount);
+//                    }
                 }
 
                 // Create payment link
@@ -239,6 +237,37 @@ public class OrderController {
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/order/ingredient/{id}")
+    public void updateOrderIngredientQty(@PathVariable UUID id) {
+        // Find the order by ID, throwing an exception if not found
+        Order order = orderService.findOrderById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (order.getStatus().equals(OrderStatus.COMPLETE)) {
+            return;
+        }
+
+        // Retrieve the order lines from the found order
+        List<OrderLine> orderLines = order.getOrderLines();
+
+        // Iterate through each order line to update ingredient quantities
+        for (OrderLine ol : orderLines) {
+            int foodOrderedQty = ol.getQty();
+
+            // Use findById to retrieve the food safely
+            Food food = ol.getFood(); // Assuming food is already fetched with the order line
+            List<Recipe> recipes = food.getRecipes();
+
+            for (Recipe r : recipes) {
+                int ingredientUsedQty = r.getQty();
+                int totalUsed = foodOrderedQty * ingredientUsedQty;
+
+                // Update ingredient quantity using the ingredient ID
+                ingredientService.updateQty(r.getIngredient().getId(), -totalUsed);
+            }
         }
     }
 }
