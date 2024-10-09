@@ -1,6 +1,7 @@
 package ku.cs.restaurant.controller;
 
 import ku.cs.restaurant.dto.Payment.PaymentResponse;
+import ku.cs.restaurant.dto.financial.CreateFinancialRequest;
 import ku.cs.restaurant.dto.food.FoodDto;
 import ku.cs.restaurant.dto.food.FoodListDto;
 import ku.cs.restaurant.dto.order.*;
@@ -28,10 +29,11 @@ public class OrderController {
     private final OrderLineService orderLineService;
     private final IngredientService ingredientService;
     private final FoodService foodService;
+    private final FinancialService financialService;
 
     public OrderController(OrderService orderService, PaymentService paymentService, UserService userService,
                            JwtUtils jwtUtils, ReceiptService receiptService, OrderLineService orderLineService,
-                           IngredientService ingredientService, FoodService foodService) {
+                           IngredientService ingredientService, FoodService foodService, FinancialService financialService) {
         this.orderService = orderService;
         this.paymentService = paymentService;
         this.userService = userService;
@@ -40,6 +42,7 @@ public class OrderController {
         this.orderLineService = orderLineService;
         this.ingredientService = ingredientService;
         this.foodService = foodService;
+        this.financialService = financialService;
     }
 
     @PostMapping("/order")
@@ -69,7 +72,7 @@ public class OrderController {
                     Optional<Food> optionalFood = foodService.getFoodById(foodId);
 
                     // Check if the food exists
-                    if (!optionalFood.isPresent()) {
+                    if (optionalFood.isEmpty()) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(new ApiResponse<>(false, "Food not found for ID: " + foodId, null));
                     }
@@ -232,30 +235,32 @@ public class OrderController {
 
     @PostMapping("/order/ingredient/{id}")
     public void updateOrderIngredientQty(@PathVariable UUID id) {
-        // Find the order by ID, throwing an exception if not found
         Order order = orderService.findOrderById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
-        if (order.getStatus().equals(OrderStatus.COMPLETE)) {
-            return;
+        if (order.getStatus().equals(OrderStatus.COMPLETE)) return;
+
+
+        CreateFinancialRequest req = new CreateFinancialRequest();
+        Optional<Order> existOrder = orderService.findOrderById(id);
+        if (existOrder.isPresent()) {
+            req.setIncome(existOrder.get().getTotal());
+            req.setExpense(0.0);
+            financialService.addFinancial(req);
         }
 
-        // Retrieve the order lines from the found order
         List<OrderLine> orderLines = order.getOrderLines();
 
-        // Iterate through each order line to update ingredient quantities
         for (OrderLine ol : orderLines) {
             int foodOrderedQty = ol.getQty();
 
-            // Use findById to retrieve the food safely
-            Food food = ol.getFood(); // Assuming food is already fetched with the order line
+            Food food = ol.getFood();
             List<Recipe> recipes = food.getRecipes();
 
             for (Recipe r : recipes) {
                 int ingredientUsedQty = r.getQty();
                 int totalUsed = foodOrderedQty * ingredientUsedQty;
 
-                // Update ingredient quantity using the ingredient ID
                 ingredientService.updateQty(r.getIngredient().getId(), -totalUsed);
             }
         }

@@ -1,10 +1,12 @@
 package ku.cs.restaurant.controller;
 
 import ku.cs.restaurant.dto.ApiResponse;
+import ku.cs.restaurant.dto.financial.CreateFinancialRequest;
 import ku.cs.restaurant.dto.ingredient.UpdateQtyRequest;
 import ku.cs.restaurant.dto.ingredient.UpdateStatusRequest;
 import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.entity.Status;
+import ku.cs.restaurant.service.FinancialService;
 import ku.cs.restaurant.service.ImageService;
 import ku.cs.restaurant.service.IngredientService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,12 @@ import java.util.UUID;
 public class IngredientController {
     private final IngredientService service;
     private final ImageService imageService;
+    private final FinancialService financialService;
 
-    public IngredientController(IngredientService service, ImageService imageService) {
+    public IngredientController(IngredientService service, ImageService imageService, FinancialService financialService) {
         this.service = service;
         this.imageService = imageService;
+        this.financialService = financialService;
     }
 
     // Create a new ingredient
@@ -32,6 +36,10 @@ public class IngredientController {
         try {
             String imagePath = imageService.saveImage("src/main/resources/images/ingredients", image);
             ingredient.setImagePath(imagePath);
+            CreateFinancialRequest req = new CreateFinancialRequest();
+            req.setExpense(ingredient.getAmount() * ingredient.getQty());
+            req.setIncome(0);
+            financialService.addFinancial(req);
 
             Ingredient createdIngredient = service.createIngredient(ingredient);
             return ResponseEntity.status(HttpStatus.CREATED)

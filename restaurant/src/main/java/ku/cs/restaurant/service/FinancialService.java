@@ -16,7 +16,7 @@ public class FinancialService {
         this.financialRepository = financialRepository;
     }
 
-    public Financial addFinancial(CreateFinancialRequest request) {
+    public void addFinancial(CreateFinancialRequest request) {
         Date today = new Date();
 
         Optional<Financial> optionalFinancial = financialRepository.findById(today);
@@ -25,13 +25,15 @@ public class FinancialService {
             Financial exist = optionalFinancial.get();
             exist.setIncome(exist.getIncome() + request.getIncome());
             exist.setExpense(exist.getExpense() + request.getExpense());
-            return financialRepository.save(exist);
+            exist.setTotal(exist.getIncome() - exist.getExpense());
+            financialRepository.save(exist);
         } else {
             Financial financial = new Financial();
             financial.setDate(today);
             financial.setIncome(request.getIncome());
             financial.setExpense(request.getExpense());
-            return financialRepository.save(financial);
+            financial.setTotal(request.getIncome() - request.getExpense());
+            financialRepository.save(financial);
         }
     }
 }
