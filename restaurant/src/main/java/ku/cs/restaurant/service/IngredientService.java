@@ -1,5 +1,6 @@
 package ku.cs.restaurant.service;
 
+import ku.cs.restaurant.dto.financial.CreateFinancialRequest;
 import ku.cs.restaurant.entity.Ingredient;
 import ku.cs.restaurant.repository.IngredientRepository;
 import ku.cs.restaurant.entity.Status;
@@ -12,13 +13,19 @@ import java.util.UUID;
 @Service
 public class IngredientService {
     private final IngredientRepository repository;
+    private final FinancialService financialService;
 
-    public IngredientService(IngredientRepository repository) {
+    public IngredientService(IngredientRepository repository, FinancialService financialService) {
         this.repository = repository;
+        this.financialService = financialService;
     }
 
     // Create a new ingredient
     public Ingredient createIngredient(Ingredient ingredient) {
+        CreateFinancialRequest req = new CreateFinancialRequest();
+        req.setExpense(ingredient.getAmount() * ingredient.getQty());
+        req.setIncome(0);
+        financialService.addFinancial(req);
         return repository.save(ingredient);
     }
 
@@ -41,13 +48,20 @@ public class IngredientService {
     public Optional<Ingredient> updateQty(UUID id, int amount) {
         Optional<Ingredient> optionalIngredient = repository.findById(id);
         optionalIngredient.ifPresent(ingredient -> {
-            ingredient.setQty(ingredient.getQty() + amount);
+            ingredient.setQty(amount);
 
             // Set status to OUT_OF_STOCK if quantity is 0 or less
             if (ingredient.getQty() <= 0) {
                 ingredient.setStatus(Status.OUT_OF_STOCK);
                 ingredient.setQty(0); // Ensure quantity doesn't go negative
+            } else if (ingredient.getStatus() == Status.OUT_OF_STOCK && amount > 0) {
+                ingredient.setStatus(Status.AVAILABLE);
             }
+
+            CreateFinancialRequest req = new CreateFinancialRequest();
+            req.setIncome(0.0);
+            req.setExpense(ingredient.getAmount() * amount); // price * new amount
+            financialService.addFinancial(req);
 
             repository.save(ingredient);
         });

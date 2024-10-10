@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import EditIngredientModal from '@/components/EditIngredientModal.vue'
 import IngredientCard from '@/components/IngredientCard.vue'
 import ingredientApi from '@/api/ingredientApi'
 import Search from '@/components/Search.vue'
@@ -8,6 +9,54 @@ import router from '@/router'
 
 const ingredients = ref([])
 const searchQuery = ref('')
+const isModalOpened = ref(false)
+const selectedIngredient = ref({
+    id: '',
+    name: '',
+    qty: 0,
+    status: '',
+    expireDate: '',
+})
+
+const openModal = (ingredient) => {
+    selectedIngredient.value = { ...ingredient }
+    isModalOpened.value = true
+}
+
+const closeModal = () => {
+    isModalOpened.value = false
+    selectedIngredient.value = {
+        id: '',
+        name: '',
+        qty: 0,
+        status: '',
+        expireDate: '',
+    } // Reset when modal closes
+}
+
+const submitHandler = async () => {
+    try {
+        // Call API to update the ingredient
+        const { data: response } = await ingredientApi.updateIngredient({
+            id: selectedIngredient.value.id,
+            qty: selectedIngredient.value.qty,
+        })
+        console.log('Ingredient updated:', response.data)
+
+        // Update the local ingredients array
+        const index = ingredients.value.findIndex(
+            (i) => i.id === selectedIngredient.value.id
+        )
+        if (index !== -1) {
+            ingredients.value[index] = { ...selectedIngredient.value }
+        }
+
+        // Close modal after successful update
+        closeModal()
+    } catch (error) {
+        console.error('Error updating ingredient:', error)
+    }
+}
 
 const filteredIngredients = computed(() => {
     if (!searchQuery.value) return ingredients.value
@@ -43,6 +92,52 @@ onMounted(() => {
         <main
             class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
         >
+            <!-- Modal with Form to Update Ingredient -->
+            <EditIngredientModal
+                :isOpen="isModalOpened"
+                @modal-close="closeModal"
+                @submit="submitHandler"
+                name="first-modal"
+            >
+                <template #header>
+                    <div>
+                        Editing Quantity for: {{ selectedIngredient.name }}
+                    </div>
+                </template>
+                <template #content>
+                    <form @submit.prevent="submitHandler">
+                        <div class="mb-4">
+                            <label class="block text-gray-700"
+                                >Quantity (Kg)</label
+                            >
+                            <input
+                                v-model="selectedIngredient.qty"
+                                min="0"
+                                type="number"
+                                class="border p-2 w-full"
+                                required
+                            />
+                        </div>
+                    </form>
+                </template>
+                <template #footer>
+                    <div class="flex justify-end gap-4">
+                        <button
+                            @click="closeModal"
+                            class="bg-gray-300 px-4 py-2 rounded-md"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="submitHandler"
+                            class="bg-blue-500 text-white px-4 py-2 rounded-md"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </template>
+            </EditIngredientModal>
+
             <section class="flex gap-4">
                 <Search @update-search="searchQuery = $event" />
                 <div
@@ -71,14 +166,19 @@ onMounted(() => {
                     </span>
                 </div>
             </section>
+
             <div class="text-2xl font-bold">Ingredients</div>
+
             <section class="pb-12">
                 <ul class="ingredients-grid">
                     <li
                         v-for="ingredient in filteredIngredients"
                         :key="ingredient.id"
                     >
-                        <IngredientCard :ingredientData="ingredient" />
+                        <IngredientCard
+                            @click="openModal(ingredient)"
+                            :ingredientData="ingredient"
+                        />
                     </li>
                 </ul>
             </section>
