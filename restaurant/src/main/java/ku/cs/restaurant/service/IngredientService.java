@@ -48,6 +48,7 @@ public class IngredientService {
     public Optional<Ingredient> updateQty(UUID id, int amount) {
         Optional<Ingredient> optionalIngredient = repository.findById(id);
         optionalIngredient.ifPresent(ingredient -> {
+            int newQty = amount - ingredient.getQty();
             ingredient.setQty(amount);
 
             // Set status to OUT_OF_STOCK if quantity is 0 or less
@@ -60,7 +61,8 @@ public class IngredientService {
 
             CreateFinancialRequest req = new CreateFinancialRequest();
             req.setIncome(0.0);
-            req.setExpense(ingredient.getAmount() * amount); // price * new amount
+
+            req.setExpense(ingredient.getAmount() * newQty); // price * new amount
             financialService.addFinancial(req);
 
             repository.save(ingredient);
