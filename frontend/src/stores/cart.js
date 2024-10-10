@@ -59,5 +59,13 @@ export const foodsStore = defineStore('foods', {
             localStorage.setItem('carts', JSON.stringify(this.cart))
             console.log('Updated cart:', localStorage.getItem('carts'))
         },
+
+        removeAllById(id) {
+            this.cart = this.cart.filter((item) => item.food.id !== id)
+
+            localStorage.setItem('carts', JSON.stringify(this.cart))
+
+            console.log('Updated cart after removing all by ID:', this.cart)
+        },
     },
 })

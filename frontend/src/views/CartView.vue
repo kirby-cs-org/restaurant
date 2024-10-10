@@ -32,12 +32,18 @@
                         <p>Price: {{ item.food.price }} ฿</p>
                         <p>Quantity: {{ item.quantity }}</p>
                     </div>
-                    <div>
+                    <div class="flex flex-col gap-4">
                         <button
-                            class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+                            class="bg-red-400 text-white py-1 px-3 rounded-md hover:bg-red-600"
                             @click="removeFromCart(item.food.id)"
                         >
-                            Remove
+                            Decrease
+                        </button>
+                        <button
+                            class="bg-red-500 text-white rounded-md py-1 px-2"
+                            @click="removeAllCart(item.food.id)"
+                        >
+                            Remove all
                         </button>
                     </div>
                 </li>
@@ -65,6 +71,11 @@ const removeFromCart = (id) => {
         foodStore.removeFromCart(id)
         cart.value = JSON.parse(localStorage.getItem('carts')) || []
     }
+}
+
+const removeAllCart = (id) => {
+    foodStore.removeAllById(id)
+    cart.value = JSON.parse(localStorage.getItem('carts')) || []
 }
 
 const total = computed(() => {
