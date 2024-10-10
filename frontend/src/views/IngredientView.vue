@@ -11,9 +11,9 @@ const searchQuery = ref('')
 
 const filteredIngredients = computed(() => {
     if (!searchQuery.value) return ingredients.value
-    return ingredients.value.filter((ingredient) => {
+    return ingredients.value.filter((ingredient) =>
         ingredient.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    })
+    )
 })
 
 const addingredients = () => {
