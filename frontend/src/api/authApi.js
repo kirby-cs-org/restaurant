@@ -12,6 +12,12 @@ const authApi = {
             headers: { 'Content-Type': 'application/json' },
         })
     },
+
+    validateToken(token) {
+        return apiClient.post('/auth', token, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+    },
 }
 
 export default authApi

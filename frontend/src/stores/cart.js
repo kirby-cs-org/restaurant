@@ -67,5 +67,10 @@ export const foodsStore = defineStore('foods', {
 
             console.log('Updated cart after removing all by ID:', this.cart)
         },
+
+        getCartItemCount(foodId) {
+            const itemInCart = this.cart.find((item) => item.food.id === foodId)
+            return itemInCart ? itemInCart.quantity : 0
+        },
     },
 })

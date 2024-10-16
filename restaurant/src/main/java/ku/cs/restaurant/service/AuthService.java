@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AuthService {
     ApiResponse<SigninResponse> signIn(SigninRequest signinRequest);
+    Boolean validateToken(String token);
 }

@@ -84,4 +84,8 @@ public class IngredientService {
     public void deleteIngredient(UUID id) {
         repository.deleteById(id);
     }
+
+    public void decreaseIngredientQtyByOrderId(UUID id) {
+        repository.decreaseIngredientQtyByOrderId(id);
+    }
 }

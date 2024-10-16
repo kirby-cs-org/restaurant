@@ -55,4 +55,26 @@ public class AuthController {
                     .body(new ApiResponse<>(false, "Sign-in failed: " + e.getMessage(), null));
         }
     }
+
+    @PostMapping("/auth")
+    public ResponseEntity<ApiResponse<?>> validateToken(@RequestBody String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, "Token must not be empty.", null));
+        }
+
+        try {
+            boolean isAuth = authService.validateToken(token);
+
+            if (isAuth) {
+                return ResponseEntity.ok(new ApiResponse<>(true, "Your JWT is valid.", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse<>(false, "Your JWT is invalid.", null));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "An error occurred while validating the token.", null));
+        }
+    }
 }

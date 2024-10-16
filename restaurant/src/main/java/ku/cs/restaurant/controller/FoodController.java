@@ -3,6 +3,7 @@ package ku.cs.restaurant.controller;
 import ku.cs.restaurant.dto.ApiResponse;
 import ku.cs.restaurant.dto.food.FoodCreateRequest;
 import ku.cs.restaurant.dto.food.FoodDeleteDto;
+import ku.cs.restaurant.dto.food.FoodsResponse;
 import ku.cs.restaurant.dto.recipe.IngredientQtyRequest;
 import ku.cs.restaurant.entity.Food;
 import ku.cs.restaurant.entity.Status;
@@ -67,8 +68,8 @@ public class FoodController {
     }
 
     @GetMapping("/foods")
-    public ResponseEntity<ApiResponse<List<Food>>> getAll() {
-        List<Food> foods = service.getAllFoods();
+    public ResponseEntity<ApiResponse<List<FoodsResponse>>> getAll() {
+        List<FoodsResponse> foods = service.getAllFoods();
         String imageBaseUrl = "http://localhost:8088/images/foods/";
         foods.forEach(food -> food.setImagePath(imageBaseUrl + Paths.get(food.getImagePath()).getFileName()));
         return ResponseEntity.ok(new ApiResponse<>(true, "Foods retrieved successfully.", foods));

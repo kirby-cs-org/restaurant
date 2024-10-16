@@ -17,7 +17,7 @@ public class Order {
     @Id
     @GeneratedValue
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "o_id")
+    @Column(name = "o_id", length=36)
     private UUID id;
 
     @Column(name = "o_total", nullable = false)

@@ -35,8 +35,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String jwt = parseJwt(request);
 
-        // allow signin signup
-        if (request.getRequestURI().equals("/auth/signin") || request.getRequestURI().equals("/auth/signup") || request.getRequestURI().contains("/images")) {
+        // allow signin signup auth
+        if (request.getRequestURI().equals("/auth/signin") || request.getRequestURI().equals("/auth/signup") || request.getRequestURI().equals("/auth") || request.getRequestURI().contains("/images")) {
             filterChain.doFilter(request, response); // Proceed without JWT validation
             return;
         }

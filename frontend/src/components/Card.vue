@@ -9,7 +9,7 @@
                 class="w-full h-full object-cover rounded-t-lg"
             />
             <div
-                class="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-20 buttom-0"
+                class="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-20 bottom-0"
             ></div>
         </div>
         <div
@@ -19,7 +19,16 @@
             <span class="text-yellow-500">{{ props.foodsData.price }} ฿</span>
             <button
                 class="px-2 py-1 rounded-md bg-yellow-300 shadow-md hover:bg-yellow-500 duration-100"
+                :class="{
+                    'opacity-20 cursor-not-allowed':
+                        foodStore.getCartItemCount(props.foodsData.id) >=
+                        props.foodsData.max,
+                }"
                 @click="addToCart(props.foodsData)"
+                :disabled="
+                    foodStore.getCartItemCount(props.foodsData.id) >=
+                    props.foodsData.max
+                "
             >
                 Add to Cart
             </button>
@@ -39,6 +48,7 @@ const props = defineProps({
 const foodStore = foodsStore()
 
 const addToCart = (food) => {
+    console.log(food.max)
     foodStore.addToCart(food)
 }
 </script>

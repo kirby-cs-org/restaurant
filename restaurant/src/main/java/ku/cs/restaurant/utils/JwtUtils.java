@@ -2,14 +2,12 @@ package ku.cs.restaurant.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import ku.cs.restaurant.service.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;
@@ -66,21 +64,34 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
-            return true;
-        } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+        if (authToken == null || authToken.trim().isEmpty()) {
+            logger.warn("JWT Token is null or empty.");
+            return false;
         }
 
-        return false;
+        // Remove surrounding braces and any additional formatting
+        authToken = authToken.replaceAll("[{}]", "").trim(); // Remove { and }
+
+        // Check if the token contains the "token:" prefix and extract
+
+        if (authToken.startsWith("token:"))
+            authToken = authToken.substring(6).trim(); // Remove the "token:" prefix
+
+
+        // Ensure the token doesn't contain any additional quotes or whitespace
+        authToken = authToken.replaceAll("[\"\\s]", "").trim();
+        logger.info("Validating JWT Token: {}", authToken);
+
+        try {
+            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
+            logger.info("JWT Token is valid.");
+            return true;
+        } catch (Exception e) {
+            logger.error("JWT Token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
+
 
     private Key key() {
         byte[] keyBytes = jwtSecret.getBytes();

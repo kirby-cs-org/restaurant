@@ -11,6 +11,7 @@ import SuccessView from '@/views/SuccessView.vue'
 import CancelView from '@/views/CancelView.vue'
 import AddIngredientsView from '@/views/AddIngredientsView.vue'
 import AddFoodView from '@/views/AddFoodView.vue'
+import authApi from '@/api/authApi'
 
 const routes = [
     {
@@ -81,14 +82,34 @@ const router = createRouter({
 })
 
 // navigation guard
-router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem('token') // Check for token
+router.beforeEach(async (to, from, next) => {
+    try {
+        // Allow navigation to 'signin' and 'signup' routes without token validation
+        if (to.name === 'signin' || to.name === 'signup') {
+            next()
+            return
+        }
 
-    // If the route is protected (not signin or signup) and the user is not authenticated
-    if (!isAuthenticated && to.name !== 'signin' && to.name !== 'signup') {
-        next({ name: 'signin' }) // Redirect to signin
-    } else {
-        next() // Proceed to the route
+        const token = localStorage.getItem('token')
+
+        // Check if the token exists
+        if (!token) {
+            return next({ name: 'signin' })
+        }
+
+        const { data: response } = await authApi.validateToken(token)
+
+        const isAuthenticated = response.success
+
+        // Redirect to 'signin' if the token is not valid
+        if (!isAuthenticated) {
+            return next({ name: 'signin' })
+        }
+
+        next()
+    } catch (error) {
+        console.error('Error validating token:', error)
+        next({ name: 'signin' })
     }
 })
 

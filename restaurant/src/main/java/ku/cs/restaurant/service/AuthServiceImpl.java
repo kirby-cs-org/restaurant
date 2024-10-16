@@ -54,4 +54,9 @@ public class AuthServiceImpl implements AuthService {
             return new ApiResponse<>(false, "Sign-in failed: " + e.getMessage(), null);
         }
     }
+
+    @Override
+    public Boolean validateToken(String token) {
+        return jwtUtils.validateJwtToken(token);
+    }
 }
