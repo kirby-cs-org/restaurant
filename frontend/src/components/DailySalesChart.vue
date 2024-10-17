@@ -21,18 +21,7 @@ export default {
             chart.value = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: [
-                        '09:00 am',
-                        '',
-                        '',
-                        '12:00 pm',
-                        '',
-                        '',
-                        '03:00 pm',
-                        '',
-                        '',
-                        '06:00 pm',
-                    ],
+                    labels: ['10/10', '11/10', '12/10', '', '', '', ''],
                     datasets: [
                         {
                             fill: 'origin',
