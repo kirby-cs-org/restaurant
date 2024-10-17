@@ -24,8 +24,8 @@ public class Ingredient {
     @Column(name = "i_name")
     private String name;
 
-    @Column(name = "i_amount")
-    private double amount;
+    @Column(name = "i_price")
+    private double price;
 
     @Column(name = "i_status")
     @Enumerated(EnumType.STRING)

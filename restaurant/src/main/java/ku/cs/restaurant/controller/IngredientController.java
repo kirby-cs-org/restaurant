@@ -37,7 +37,7 @@ public class IngredientController {
             String imagePath = imageService.saveImage("src/main/resources/images/ingredients", image);
             ingredient.setImagePath(imagePath);
             CreateFinancialRequest req = new CreateFinancialRequest();
-            req.setExpense(ingredient.getAmount() * ingredient.getQty());
+            req.setExpense(ingredient.getPrice() * ingredient.getQty());
             req.setIncome(0);
             financialService.addFinancial(req);
 

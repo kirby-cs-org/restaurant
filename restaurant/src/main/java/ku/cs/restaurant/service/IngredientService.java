@@ -23,7 +23,7 @@ public class IngredientService {
     // Create a new ingredient
     public Ingredient createIngredient(Ingredient ingredient) {
         CreateFinancialRequest req = new CreateFinancialRequest();
-        req.setExpense(ingredient.getAmount() * ingredient.getQty());
+        req.setExpense(ingredient.getPrice() * ingredient.getQty());
         req.setIncome(0);
         financialService.addFinancial(req);
         return repository.save(ingredient);
@@ -62,7 +62,7 @@ public class IngredientService {
             CreateFinancialRequest req = new CreateFinancialRequest();
             req.setIncome(0.0);
 
-            req.setExpense(ingredient.getAmount() * newQty); // price * new amount
+            req.setExpense(ingredient.getPrice() * newQty); // price * new amount
             financialService.addFinancial(req);
 
             repository.save(ingredient);
