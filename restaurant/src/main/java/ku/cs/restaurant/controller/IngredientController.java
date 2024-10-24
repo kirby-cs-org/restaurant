@@ -36,12 +36,14 @@ public class IngredientController {
         try {
             String imagePath = imageService.saveImage("src/main/resources/images/ingredients", image);
             ingredient.setImagePath(imagePath);
+
+            Ingredient createdIngredient = service.createIngredient(ingredient);
             CreateFinancialRequest req = new CreateFinancialRequest();
-            req.setExpense(ingredient.getPrice() * ingredient.getQty());
+
+            req.setExpense(createdIngredient.getPrice());
             req.setIncome(0);
             financialService.addFinancial(req);
 
-            Ingredient createdIngredient = service.createIngredient(ingredient);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>(true, "Ingredient created successfully.", createdIngredient));
         } catch (Exception e) {

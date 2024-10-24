@@ -1,19 +1,18 @@
 package ku.cs.restaurant.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
 public class Financial {
     @Id
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    @JdbcTypeCode(SqlTypes.LOCAL_DATE)
+    private LocalDate date;
 
     private double income;
     private double expense;

@@ -15,7 +15,7 @@ const formatDateToDDMMYY = (dateStr) => {
 
 const ingredientData = ref({
     name: '',
-    amount: 0.0,
+    price: 0.0,
     status: 'AVAILABLE',
     qty: 0,
     expireDate: '', // This will store the formatted date
@@ -115,14 +115,14 @@ const goBack = () => {
 
                     <div>
                         <label
-                            for="amount"
+                            for="price"
                             class="block font-semibold mb-1 pt-3"
-                            >Amount</label
+                            >Add Price</label
                         >
                         <input
                             type="number"
-                            id="amount"
-                            v-model="ingredientData.amount"
+                            id="price"
+                            v-model="ingredientData.price"
                             required
                             class="border p-2 rounded w-full"
                         />
@@ -130,7 +130,7 @@ const goBack = () => {
 
                     <div>
                         <label for="qty" class="block font-semibold mb-1 pt-3"
-                            >Quantity</label
+                            >Add Quantity</label
                         >
                         <input
                             type="number"

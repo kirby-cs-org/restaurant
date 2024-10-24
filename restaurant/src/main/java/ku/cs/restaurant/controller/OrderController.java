@@ -235,35 +235,35 @@ public class OrderController {
 
     @PostMapping("/order/ingredient/{id}")
     public void updateOrderIngredientQty(@PathVariable UUID id) {
-//        Order order = orderService.findOrderById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-//
-//        if (order.getStatus().equals(OrderStatus.COMPLETE)) return;
-//
-//
-//        CreateFinancialRequest req = new CreateFinancialRequest();
-//        Optional<Order> existOrder = orderService.findOrderById(id);
-//        if (existOrder.isPresent()) {
-//            req.setIncome(existOrder.get().getTotal());
-//            req.setExpense(0.0);
-//            financialService.addFinancial(req);
-//        }
-//
-//        List<OrderLine> orderLines = order.getOrderLines();
-//
-//        for (OrderLine ol : orderLines) {
-//            int foodOrderedQty = ol.getQty();
-//
-//            Food food = ol.getFood();
-//            List<Recipe> recipes = food.getRecipes();
-//
-//            for (Recipe r : recipes) {
-//                int ingredientUsedQty = r.getQty();
-//                int totalUsed = foodOrderedQty * ingredientUsedQty;
-//
-//                ingredientService.updateQty(r.getIngredient().getId(), -totalUsed);
-//            }
-//        }
-        ingredientService.decreaseIngredientQtyByOrderId(id);
+        Order order = orderService.findOrderById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (order.getStatus().equals(OrderStatus.COMPLETE)) return;
+
+
+        CreateFinancialRequest req = new CreateFinancialRequest();
+        Optional<Order> existOrder = orderService.findOrderById(id);
+        if (existOrder.isPresent()) {
+            req.setIncome(existOrder.get().getTotal());
+            req.setExpense(0.0);
+            financialService.addFinancial(req);
+        }
+
+        List<OrderLine> orderLines = order.getOrderLines();
+
+        for (OrderLine ol : orderLines) {
+            int foodOrderedQty = ol.getQty();
+
+            Food food = ol.getFood();
+            List<Recipe> recipes = food.getRecipes();
+
+            for (Recipe r : recipes) {
+                int ingredientUsedQty = r.getQty();
+                int totalUsed = foodOrderedQty * ingredientUsedQty;
+
+                ingredientService.updateQty(r.getIngredient().getId(), -totalUsed);
+            }
+        }
+
     }
 }

@@ -5,7 +5,8 @@ import ku.cs.restaurant.entity.Financial;
 import ku.cs.restaurant.repository.FinancialRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,7 +18,7 @@ public class FinancialService {
     }
 
     public void addFinancial(CreateFinancialRequest request) {
-        Date today = new Date();
+        LocalDate today = LocalDate.now();
 
         Optional<Financial> optionalFinancial = financialRepository.findById(today);
 
@@ -35,5 +36,10 @@ public class FinancialService {
             financial.setTotal(request.getIncome() - request.getExpense());
             financialRepository.save(financial);
         }
+    }
+
+
+    public List<Financial> getAll() {
+        return financialRepository.findAll();
     }
 }

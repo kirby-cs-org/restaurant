@@ -11,6 +11,7 @@ onMounted(async () => {
     const orderId = route.query.id
     if (orderId) {
         try {
+
             const { data: resQty } = await orderApi.updateOrderIngredientQty(
                 orderId
             )
