@@ -7,8 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class FinancialController {
@@ -28,4 +31,13 @@ public class FinancialController {
         }
     }
 
+    @GetMapping("/financial")
+    public ResponseEntity<ApiResponse<List<Financial>>> getFinancialByDate(@PathVariable LocalDate date) {
+        try {
+            List<Financial> financials = financialService.getFinancialByDate(date);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Foods retrieved successfully.", financials));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, "", null));
+        }
+    }
 }
