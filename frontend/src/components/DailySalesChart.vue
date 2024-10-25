@@ -1,100 +1,107 @@
 <template>
     <div>
-        <canvas id="myChart"></canvas>
+        <canvas ref="myChart"></canvas>
     </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import financialApi from '@/api/financialApi'
 
 Chart.register(...registerables)
 
-export default {
-    name: 'DailySalesChart',
-    setup() {
-        const chart = ref(null)
+const myChart = ref(null)
+const chart = ref(null)
+const data = ref([])
 
-        onMounted(() => {
-            const ctx = document.getElementById('myChart').getContext('2d')
+const getDatas = async () => {
+    const { data: res } = await financialApi.getAll()
+    data.value = res.data
+    console.log('sss', data.value)
 
-            chart.value = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['10/10', '11/10', '12/10', '', '', '', ''],
-                    datasets: [
-                        {
-                            fill: 'origin',
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            data: [10, 50, 50, 130, 120, 200, 80, 95, 70, 20],
-                            tension: 0.5,
-                            pointRadius: 5,
-                        },
-                    ],
+    const labels = data.value.map((item) =>
+        item.date.split('-').slice(1).join('/')
+    )
+    const totalData = data.value.map((item) => item.income)
+
+    // Initialize chart after data is retrieved
+    const ctx = myChart.value.getContext('2d')
+    chart.value = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    fill: 'origin',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    data: totalData,
+                    tension: 0.5,
+                    pointRadius: 5,
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        title: {
-                            display: true,
-                            text: 'Daily Sales',
-                            font: {
-                                family: 'Gilroy Bold',
-                                size: 30,
-                            },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: 'Income',
+                    font: {
+                        family: 'Gilroy Bold',
+                        size: 30,
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    title: {
+                        display: false,
+                        font: {
+                            family: 'Gilroy Bold',
+                            size: 16,
                         },
                     },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false,
-                            },
-                            title: {
-                                display: false,
-                                font: {
-                                    family: 'Gilroy Bold',
-                                    size: 16,
-                                },
-                            },
-                            ticks: {
-                                font: {
-                                    family: 'Gilroy Bold',
-                                },
-                            },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                display: true,
-                            },
-                            title: {
-                                display: false,
-                                font: {
-                                    family: 'Gilroy Bold',
-                                    size: 16,
-                                },
-                            },
-                            ticks: {
-                                font: {
-                                    family: 'Gilroy Bold',
-                                    size: 14,
-                                },
-                            },
+                    ticks: {
+                        font: {
+                            family: 'Gilroy Bold',
                         },
                     },
                 },
-            })
-        })
-
-        return {
-            chart,
-        }
-    },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: true,
+                    },
+                    title: {
+                        display: false,
+                        font: {
+                            family: 'Gilroy Bold',
+                            size: 16,
+                        },
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Gilroy Bold',
+                            size: 14,
+                        },
+                    },
+                },
+            },
+        },
+    })
 }
+
+onMounted(() => {
+    getDatas()
+})
 </script>
 
 <style scoped>
