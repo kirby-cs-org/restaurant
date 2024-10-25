@@ -38,8 +38,12 @@ public class FinancialService {
         }
     }
 
-
     public List<Financial> getAll() {
         return financialRepository.findAll();
     }
+
+    public List<Financial> getFinancialByDate(LocalDate date) {
+        return financialRepository.findByDate(date);
+    }
+
 }
