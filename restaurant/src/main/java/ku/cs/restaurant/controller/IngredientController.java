@@ -40,7 +40,7 @@ public class IngredientController {
             Ingredient createdIngredient = service.createIngredient(ingredient);
             CreateFinancialRequest req = new CreateFinancialRequest();
 
-            req.setExpense(createdIngredient.getPrice());
+            req.setExpense(createdIngredient.getPrice() * ingredient.getQty());
             req.setIncome(0);
             financialService.addFinancial(req);
 

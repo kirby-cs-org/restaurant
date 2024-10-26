@@ -6,7 +6,9 @@ import IngredientCard from '@/components/IngredientCard.vue'
 import ingredientApi from '@/api/ingredientApi'
 import Search from '@/components/Search.vue'
 import router from '@/router'
+import userApi from '@/api/userApi'
 
+const role = ref('')
 const ingredients = ref([])
 const searchQuery = ref('')
 const isModalOpened = ref(false)
@@ -19,6 +21,7 @@ const selectedIngredient = ref({
 })
 
 const openModal = (ingredient) => {
+    if (role.value !== 'ADMIN') return
     selectedIngredient.value = { ...ingredient }
     isModalOpened.value = true
 }
@@ -79,8 +82,14 @@ const fetchIngredients = async () => {
     }
 }
 
+const getRole = async () => {
+    const { data: res } = await userApi.getUserByJwt()
+    role.value = res.data.role
+}
+
 onMounted(() => {
     fetchIngredients()
+    getRole()
 })
 </script>
 
@@ -154,6 +163,7 @@ onMounted(() => {
                     onmouseout="this.style.transform='scale(1)'"
                 >
                     <span
+                        v-if="role === `ADMIN`"
                         style="
                             display: flex;
                             align-items: center;

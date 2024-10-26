@@ -1,69 +1,69 @@
-CREATE TABLE `ingredient` (
-    i_name VARCHAR(64) PRIMARY KEY,
-    i_amount INT NOT NULL CHECK (i_amount >= 0),
-    i_status ENUM('out_of_stock', 'available') NOT NULL,
-    i_qty INT NOT NULL CHECK (i_qty >= 0),
-    expire_date DATE NOT NULL
+CREATE TABLE user (
+    user_id VARCHAR(36) PRIMARY KEY,
+    password VARCHAR(255),
+    phone VARCHAR(15),
+    user_role VARCHAR(50),
+    username VARCHAR(50)
 );
 
-CREATE TABLE `customer` (
-    c_id VARCHAR(36) PRIMARY KEY,
-    c_name VARCHAR(64) NOT NULL,
-    c_phone VARCHAR(16) NOT NULL,
-    c_password VARCHAR(64) NOT NULL
-);
-
-CREATE TABLE `product` (
-    p_id VARCHAR(36) PRIMARY KEY,
-    p_qty INT NOT NULL CHECK (p_qty >= 0),
-    p_price DECIMAL(6, 2) NOT NULL CHECK (p_price >= 0),
-    p_name VARCHAR(64) NOT NULL,
-    p_status ENUM('out_of_stock', 'available') NOT NULL
-);
-
-CREATE TABLE `receipt` (
+CREATE TABLE receipt (
     b_id VARCHAR(36) PRIMARY KEY,
-    b_time TIME NOT NULL DEFAULT,
-    b_date DATE NOT NULL DEFAULT,
-    b_amount INT NOT NULL CHECK (b_amount >= 0),
-    b_total DECIMAL(6, 2) NOT NULL CHECK (b_total >= 0)
-);
-
-CREATE TABLE `recipe` (
-    r_qty INT NOT NULL CHECK (r_qty >= 0),
-    p_id VARCHAR(36),  
-    i_name VARCHAR(64),
-    
-    FOREIGN KEY (p_id) REFERENCES `product` (p_id),
-    FOREIGN KEY (i_name) REFERENCES `ingredient` (i_name) 
+    created_at TIMESTAMP,
+    b_total DECIMAL(10, 2)
 );
 
 CREATE TABLE `order` (
     o_id VARCHAR(36) PRIMARY KEY,
-    o_qty INT NOT NULL CHECK (o_qty >= 0),
-    o_status ENUM('pending' ,'preparing', 'out_for_delivery', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
-    o_timestamp TIMESTAMP NOT NULL
+    payment_link TEXT,
+    o_status VARCHAR(50),
+    o_total DECIMAL(10, 2),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    b_id VARCHAR(36),
+    user_id VARCHAR(36),
+    FOREIGN KEY (b_id) REFERENCES receipt(b_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
-CREATE TABLE `order_line` (
-    total_price DECIMAL(6, 2) NOT NULL CHECK (total_price >= 0),
+CREATE TABLE food (
+    f_id VARCHAR(36) PRIMARY KEY,
+    f_image VARCHAR(255),
+    f_name VARCHAR(100),
+    f_price DECIMAL(10, 2),
+    f_status VARCHAR(50)
+);
+
+CREATE TABLE ingredient (
+    i_id VARCHAR(36) PRIMARY KEY,
+    i_price DECIMAL(10, 2),
+    expire_date DATE,
+    i_image VARCHAR(255),
+    i_name VARCHAR(100),
+    i_qty INT,
+    i_status VARCHAR(50)
+);
+
+CREATE TABLE recipe (
+    qty INT,
+    f_id VARCHAR(36),
+    i_id VARCHAR(36),
+    PRIMARY KEY (f_id, i_id),
+    FOREIGN KEY (f_id) REFERENCES food(f_id),
+    FOREIGN KEY (i_id) REFERENCES ingredient(i_id)
+);
+
+CREATE TABLE order_line (
+    o_qty INT,
+    f_id VARCHAR(36),
     o_id VARCHAR(36),
-    p_id VARCHAR(36),
-
-    FOREIGN KEY (o_id) REFERENCES `order` (o_id),
-    FOREIGN KEY (p_id) REFERENCES `product` (p_id)
+    PRIMARY KEY (f_id, o_id),
+    FOREIGN KEY (f_id) REFERENCES food(f_id),
+    FOREIGN KEY (o_id) REFERENCES `order`(o_id)
 );
 
-CREATE TABLE `transaction` (
-    t_id VARCHAR(36) PRIMARY KEY,
-    t_amount DECIMAL(6, 2) NOT NULL CHECK (t_amount >= 0),
-    qr_image BLOB NOT NULL,
-    t_timestamp TIMESTAMP NOT NULL
-);
-
-CREATE TABLE `financial` (
-    f_date DATE PRIMARY KEY,
-    f_expense DECIMAL(6, 2) NOT NULL CHECK (f_expense >= 0),
-    f_income DECIMAL(6, 2) NOT NULL CHECK (f_income >= 0),
-    f_total DECIMAL(6, 2) NOT NULL CHECK (f_total >= 0)
+CREATE TABLE financial (
+    date DATE PRIMARY KEY,
+    income DECIMAL(10, 2),
+    expense DECIMAL(10, 2),
+    total DECIMAL(10, 2)
 );

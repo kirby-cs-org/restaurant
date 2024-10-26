@@ -13,7 +13,7 @@
             </div>
             <ul class="flex flex-col gap-8">
                 <li
-                    v-for="(item, index) in menuItems"
+                    v-for="(item, index) in filteredMenuItems"
                     :key="index"
                     :class="[
                         'list',
@@ -49,17 +49,34 @@
 </template>
 
 <script setup>
+import userApi from '@/api/userApi'
 import router from '@/router'
-import { ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
+const role = ref('')
 const selectedItem = ref(null)
+
+onMounted(async () => {
+    const { data: res } = await userApi.getUserByJwt()
+    role.value = res.data.role
+})
 
 const menuItems = [
     { label: 'Menu', icon: 'bars', path: '/food' },
     { label: 'Order', icon: 'book', path: '/order' },
-    { label: 'Ingredient', icon: 'book', path: '/ingredient' },
-    { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
+    { label: 'Ingredient', icon: 'book', path: '/ingredient', role: 'ADMIN' },
+    {
+        label: 'Dashboard',
+        icon: 'chart-line',
+        path: '/dashboard',
+        role: 'ADMIN',
+    },
 ]
+
+// Filter menu items based on the user's role
+const filteredMenuItems = computed(() => {
+    return menuItems.filter((item) => !item.role || item.role === role.value)
+})
 
 const selectItem = (index) => {
     selectedItem.value = index

@@ -114,10 +114,8 @@ const goBack = () => {
                     </div>
 
                     <div>
-                        <label
-                            for="price"
-                            class="block font-semibold mb-1 pt-3"
-                            >Add Price</label
+                        <label for="price" class="block font-semibold mb-1 pt-3"
+                            >Price (ต่อ 1 หน่วย)</label
                         >
                         <input
                             type="number"
@@ -130,7 +128,7 @@ const goBack = () => {
 
                     <div>
                         <label for="qty" class="block font-semibold mb-1 pt-3"
-                            >Add Quantity</label
+                            >Quantity</label
                         >
                         <input
                             type="number"
