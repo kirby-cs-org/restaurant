@@ -49,10 +49,22 @@ const createIngredientMap = () => {
 }
 
 // Handle food creation
+// Handle food creation
 const createFood = async () => {
     try {
         if (!imageFile.value) {
             alert('Please upload an image.')
+            return
+        }
+
+        // Check if at least one ingredient has a quantity greater than 0
+        const hasValidIngredient = ingredients.value.some(
+            (ingredient) => ingredient.quantity > 0
+        )
+        if (!hasValidIngredient) {
+            alert(
+                'Please select at least one ingredient with a quantity greater than 0.'
+            )
             return
         }
 
@@ -81,7 +93,7 @@ const createFood = async () => {
         const { data: response } = await foodApi.createFood(formData)
         console.log('Food created successfully:', response.data)
         // Optionally reset form or navigate to another page
-        alert('create food successfully')
+        alert('Create food successfully')
         router.push('/food')
     } catch (error) {
         console.error('Error adding food:', error.response?.data)
