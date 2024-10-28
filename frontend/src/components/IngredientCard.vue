@@ -7,7 +7,16 @@
             <h3 class="font-bold text-lg">{{ ingredientData.name }}</h3>
             <p>Quantity: {{ ingredientData.qty }} Kg.</p>
             <p>Status: {{ ingredientData.status }}</p>
-            <p>ExpireDate: {{ ingredientData.expireDate }}</p>
+
+            <p
+                :style="{
+                    color: isExpired(ingredientData.expireDate)
+                        ? 'red'
+                        : 'black',
+                }"
+            >
+                ExpireDate: {{ ingredientData.expireDate }}
+            </p>
         </div>
     </div>
 </template>
@@ -15,6 +24,13 @@
 <script setup>
 import userApi from '@/api/userApi'
 import { onMounted, ref } from 'vue'
+
+// Helper function to check if the ingredient is expired
+const isExpired = (date) => {
+    const today = new Date()
+    const expireDate = new Date(date)
+    return expireDate < today
+}
 
 const props = defineProps({
     ingredientData: {
@@ -27,6 +43,6 @@ const role = ref('')
 
 onMounted(async () => {
     const { data: res } = await userApi.getUserByJwt()
-    role.value = res.data.role
+    role.value = res.role
 })
 </script>
