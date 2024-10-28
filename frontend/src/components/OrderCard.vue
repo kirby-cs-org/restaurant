@@ -90,8 +90,12 @@ onMounted(() => {
 
 const emit = defineEmits(['mark-success', 'view-detail'])
 
-const markOrderSuccess = (id) => {
-    emit('mark-success', id)
+const markOrderSuccess = async (id) => {
+    const { data: res } = await orderApi.updateOrderStatus({
+        id: id,
+        status: 'SUCCESS',
+    })
+    console.log(res.data)
 }
 
 const viewOrderDetail = () => {
