@@ -33,7 +33,7 @@ onMounted(async () => {
             <Sidebar />
         </aside>
         <main
-            class="ml-[14rem] w-full py-8 px-8 flex flex-col gap-6 bg-gray-100 h-screen items-center justify-center"
+            class="ml-[14rem] w-full py-8 px-8 flex flex-col gap-6 bg-gray-100 h-full min-h-screen items-center justify-center"
         >
             <div
                 class="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg gap-6"

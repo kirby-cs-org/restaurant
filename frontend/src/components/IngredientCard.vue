@@ -29,6 +29,7 @@ import { onMounted, ref } from 'vue'
 const isExpired = (date) => {
     const today = new Date()
     const expireDate = new Date(date)
+    console.log(today, expireDate)
     return expireDate < today
 }
 

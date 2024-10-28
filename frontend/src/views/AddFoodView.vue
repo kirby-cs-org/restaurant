@@ -121,7 +121,7 @@ const validateInput = (ingredient) => {
             <Sidebar />
         </aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-full min-h-screen"
         >
             <h1>Create Food</h1>
             <form @submit.prevent="createFood">

@@ -46,7 +46,7 @@ onMounted(async () => {
         </aside>
 
         <main
-            class="ml-[14rem] w-full h-screen py-4 px-8 flex flex-col bg-[#FDFDFD]"
+            class="ml-[14rem] w-full h-full min-h-screen py-4 px-8 flex flex-col bg-[#FDFDFD]"
         >
             <!-- Back button -->
             <div

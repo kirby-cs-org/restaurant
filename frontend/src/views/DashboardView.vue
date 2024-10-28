@@ -10,7 +10,7 @@ import TotalIncomeChart from '@/components/TotalIncomeChart.vue'
             <Sidebar />
         </aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 min-h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 min-h-screen h-full"
         >
             <!-- Name section  -->
             <section class="w-full h-12">

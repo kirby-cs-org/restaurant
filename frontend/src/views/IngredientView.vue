@@ -99,7 +99,7 @@ onMounted(() => {
             <Sidebar />
         </aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-full min-h-screen"
         >
             <!-- Modal with Form to Update Ingredient -->
             <EditIngredientModal

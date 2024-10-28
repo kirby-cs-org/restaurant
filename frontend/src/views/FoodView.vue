@@ -43,7 +43,7 @@ onMounted(() => {
             <Sidebar />
         </aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 min-h-screen h-full"
         >
             <!-- search filter section  -->
             <section class="flex gap-4">

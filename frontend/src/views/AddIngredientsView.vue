@@ -82,7 +82,7 @@ const goBack = () => {
     <div class="flex">
         <aside class="fixed"><Sidebar /></aside>
         <main
-            class="ml-[14rem] w-full py-4 px-8 flex-col gap-4 bg-gray-50 h-screen"
+            class="ml-[14rem] w-full py-4 px-8 flex-col gap-4 bg-gray-50 h-full min-h-screen"
         >
             <!-- Back button -->
             <div
@@ -166,6 +166,9 @@ const goBack = () => {
                             type="date"
                             id="expireDate"
                             v-model="ingredientData.expireDate"
+                            @change="
+                                formatDateToDDMMYY(ingredientData.expireDate)
+                            "
                             required
                             class="border p-2 rounded w-full"
                         />
