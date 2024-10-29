@@ -4,9 +4,7 @@
     >
         <div class="flex flex-col">
             <div class="flex items-center">
-                <span class="text-4xl pr-2"
-                    >Order #{{ order.id.slice(0, 4) }}</span
-                >
+                <span class="text-3xl pr-2">Order #{{ order.id }}</span>
                 <span
                     class="align-text-bottom text-lg"
                     :style="{
