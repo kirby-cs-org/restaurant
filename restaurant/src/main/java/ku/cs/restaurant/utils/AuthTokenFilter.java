@@ -64,9 +64,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             // กำหนดบทบาทที่จำเป็นตาม URI ที่ร้องขอ
             if (requestUri.matches("/foods|/order|/order_line|/recipe|/receipt|/user|/financial")) {
-                hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+                hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN");
             } else if (requestUri.matches("/foods/.*|/order/.*|/order_line/.*|/recipe/.*|/receipt.*|/user/.*")) {
-                hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN") || roles.contains("EMPLOYEE");
+                hasRequiredRole = roles.contains("CUSTOMER") || roles.contains("ADMIN");
             } else if (requestUri.equals("/ingredient")) {
                 hasRequiredRole = roles.contains("ADMIN");
             }

@@ -14,7 +14,6 @@ const dropdownVisible = ref(false)
 const selectedOption = ref('All Orders')
 const searchQuery = ref('')
 
-// Fetch orders and user data
 const fetchOrders = async () => {
     try {
         const { data: orderResponse } = await orderApi.getOrders()
@@ -24,33 +23,38 @@ const fetchOrders = async () => {
         role.value = userResponse.data.role
         const loggedInUserId = user.value.id
 
+        console.log(orderResponse)
+        console.log('---')
+        console.log(userResponse)
+        console.log(loggedInUserId)
+
         // Filter orders based on user role
         orders.value =
             role.value === 'ADMIN'
                 ? orderResponse.data
                 : orderResponse.data.filter(
-                      (order) => order.user_id === loggedInUserId
+                      (order) => order.user.id === loggedInUserId
                   )
+
+        console.log('Filtered orders for display:', orders.value)
     } catch (error) {
         console.error('Error fetching orders:', error)
     }
 }
 
-// Lifecycle hook to fetch orders on component mount
-onMounted(fetchOrders)
+onMounted(() => {
+    fetchOrders()
+})
 
-// Toggle dropdown visibility
 const toggleDropdown = () => {
     dropdownVisible.value = !dropdownVisible.value
 }
 
-// Select an option from the dropdown
 const selectOption = (option) => {
     selectedOption.value = option
     dropdownVisible.value = false
 }
 
-// Filter orders based on selected option and search query
 const filteredOrders = computed(() => {
     return orders.value.filter((order) => {
         const matchesStatus =
@@ -63,7 +67,6 @@ const filteredOrders = computed(() => {
     })
 })
 
-// Handle order success status update
 const handleOrderSuccess = async (orderId) => {
     const order = orders.value.find((o) => o.id === orderId)
     if (order) {
@@ -76,7 +79,6 @@ const handleOrderSuccess = async (orderId) => {
     }
 }
 
-// Navigate to order detail page
 const handleViewDetail = (orderId) => {
     router.push({ name: 'receipt', params: { id: orderId } })
 }
@@ -118,6 +120,7 @@ const handleViewDetail = (orderId) => {
                             'PENDING',
                             'COMPLETE',
                             'CANCEL',
+                            'SUCCESS',
                             'All Orders',
                         ]"
                         :key="option"

@@ -13,6 +13,8 @@
                                 ? '#ADE92E'
                                 : order.status === 'PENDING'
                                 ? '#FF6B00'
+                                : order.status === 'SUCCESS'
+                                ? '#000000'
                                 : '#FF5151',
                     }"
                 >
@@ -23,14 +25,14 @@
                 }}</span>
             </div>
             <span class="text-md text-gray-500 py-1 ml-1"
-                >By {{ username }}</span
+                >By {{ props.order.user.username }}</span
             >
             <span class="text-md text-gray-500 ml-1"
                 >Time: {{ order.createdAt }}</span
             >
             <span class="py-2 pl-1">
                 <button
-                    v-if="order.status === 'COMPLETE'"
+                    v-if="order.status === 'COMPLETE' && role === 'ADMIN'"
                     class="inline-block w-52 px-10 py-2 mt-2 mr-10 rounded-lg"
                     style="background-color: #bcf14a; color: #000000"
                     @click="markOrderSuccess(order.id)"
@@ -47,7 +49,7 @@
                 <button
                     class="px-12 py-2 mt-2 rounded-lg"
                     style="background-color: #f6f6f6; color: #000000"
-                    @click="viewOrderDetail(order.id)"
+                    @click="viewOrderDetail"
                 >
                     View Details
                 </button>
@@ -61,8 +63,15 @@
 
 <script setup>
 import orderApi from '@/api/orderApi'
-import { ref, onMounted } from 'vue'
-import router from '@/router'
+import userApi from '@/api/userApi'
+import { onMounted, ref } from 'vue'
+
+const role = ref('')
+
+onMounted(async () => {
+    const { data: res } = await userApi.getUserByJwt()
+    role.value = res.data.role
+})
 
 const props = defineProps({
     order: {
@@ -72,43 +81,23 @@ const props = defineProps({
     index: Number,
 })
 
-const username = ref('')
-
-const getUsernameById = async (id) => {
-    try {
-        const { data: res } = await orderApi.getOrderUserById(id)
-        console.log(res.data.username)
-        username.value = res.data.username
-    } catch (error) {
-        console.error('Error fetching username:', error)
-    }
-}
-
-onMounted(() => {
-    getUsernameById(props.order.id)
-})
-
 const emit = defineEmits(['mark-success', 'view-detail'])
 
 const markOrderSuccess = async (id) => {
-    const { data: res } = await orderApi.updateOrderStatus({
-        id: id,
-        status: 'SUCCESS',
-    })
-    console.log(res.data)
+    try {
+        await orderApi.updateOrderStatus({ id, status: 'SUCCESS' })
+        emit('mark-success', id)
+    } catch (error) {
+        console.error('Error marking order as success:', error)
+    }
 }
 
 const viewOrderDetail = () => {
-    router.push({
-        name: 'receipt',
-        params: {
-            id: props.order.id,
-        },
-    })
+    emit('view-detail', props.order.id)
 }
 
 const payAgain = (order) => {
     window.location.href = order.paymentLink
-    console.log(order)
+    // console.log('Redirecting to payment link:', order.paymentLink)
 }
 </script>

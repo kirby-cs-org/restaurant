@@ -41,7 +41,6 @@ public class Order {
     private List<OrderLine> orderLines;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
