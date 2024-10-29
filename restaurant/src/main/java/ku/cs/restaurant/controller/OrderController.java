@@ -240,7 +240,6 @@ public class OrderController {
 
         if (order.getStatus().equals(OrderStatus.COMPLETE)) return;
 
-
         CreateFinancialRequest req = new CreateFinancialRequest();
         Optional<Order> existOrder = orderService.findOrderById(id);
         if (existOrder.isPresent()) {
@@ -253,7 +252,6 @@ public class OrderController {
 
         for (OrderLine ol : orderLines) {
             int foodOrderedQty = ol.getQty();
-
             Food food = ol.getFood();
             List<Recipe> recipes = food.getRecipes();
 
@@ -261,9 +259,9 @@ public class OrderController {
                 int ingredientUsedQty = r.getQty();
                 int totalUsed = foodOrderedQty * ingredientUsedQty;
 
-                ingredientService.updateQty(r.getIngredient().getId(), -totalUsed);
+                // Update the ingredient quantity
+                ingredientService.updateQty(r.getIngredient().getId(),  r.getIngredient().getQty() - totalUsed);
             }
         }
-
     }
 }

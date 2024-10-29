@@ -48,7 +48,7 @@ public class IngredientService {
     public Optional<Ingredient> updateQty(UUID id, int amount) {
         Optional<Ingredient> optionalIngredient = repository.findById(id);
         optionalIngredient.ifPresent(ingredient -> {
-            int newQty = amount - ingredient.getQty();
+            int newQty = amount;
             ingredient.setQty(amount);
 
             // Set status to OUT_OF_STOCK if quantity is 0 or less

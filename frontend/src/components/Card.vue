@@ -16,7 +16,12 @@
             class="flex flex-col items-center justify-center h-2/5 w-full gap-1"
         >
             <span class="font-bold">{{ props.foodsData.name }}</span>
-            <span class="text-yellow-500">{{ props.foodsData.price }} ฿</span>
+            <span class="text-yellow-500"
+                >{{
+                    props.foodsData.price + props.foodsData.price * 0.07
+                }}
+                ฿</span
+            >
             <button
                 class="px-2 py-1 rounded-md bg-yellow-300 shadow-md hover:bg-yellow-500 duration-100"
                 :class="{

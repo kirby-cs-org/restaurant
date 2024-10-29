@@ -29,7 +29,10 @@
                     </div>
                     <div class="flex-grow">
                         <h3 class="font-bold">{{ item.food.name }}</h3>
-                        <p>Price: {{ item.food.price }} ฿</p>
+                        <p>
+                            Price:
+                            {{ item.food.price + item.food.price * 0.07 }} ฿
+                        </p>
                         <p>Quantity: {{ item.quantity }}</p>
                     </div>
                     <div class="flex flex-col gap-4">

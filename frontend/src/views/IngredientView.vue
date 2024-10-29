@@ -56,6 +56,7 @@ const submitHandler = async () => {
 
         // Close modal after successful update
         closeModal()
+        await fetchIngredients()
     } catch (error) {
         console.error('Error updating ingredient:', error)
     }
@@ -91,6 +92,15 @@ onMounted(() => {
     fetchIngredients()
     getRole()
 })
+
+// Corrected validateRange function
+const validateRange = () => {
+    if (selectedIngredient.value.qty > 1000) {
+        selectedIngredient.value.qty = 1000
+    } else if (selectedIngredient.value.qty < 0) {
+        selectedIngredient.value.qty = 0 // Corrected this line
+    }
+}
 </script>
 
 <template>
@@ -117,11 +127,13 @@ onMounted(() => {
                     <form @submit.prevent="submitHandler">
                         <div class="mb-4">
                             <label class="block text-gray-700"
-                                >Quantity (Kg)</label
+                                >Quantity (หน่วย)</label
                             >
                             <input
                                 v-model="selectedIngredient.qty"
                                 min="0"
+                                max="1000"
+                                @input="validateRange()"
                                 type="number"
                                 class="border p-2 w-full"
                                 required

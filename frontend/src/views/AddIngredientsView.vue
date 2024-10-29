@@ -9,7 +9,7 @@ const formatDateToDDMMYY = (dateStr) => {
     const date = new Date(dateStr)
     const day = String(date.getDate()).padStart(2, '0')
     const month = String(date.getMonth() + 1).padStart(2, '0')
-    const year = String(date.getFullYear()) // Get last two digits of the year
+    const year = String(date.getFullYear()) // Last two digits of the year
     return `${day}-${month}-${year}`
 }
 
@@ -18,51 +18,46 @@ const ingredientData = ref({
     price: 0.0,
     status: 'AVAILABLE',
     qty: 0,
-    expireDate: '', // This will store the formatted date
+    expireDate: '',
 })
 
-const imageFile = ref(null) // To store the selected image
-const imagePreview = ref('') // To store the image preview URL
+const imageFile = ref(null)
+const imagePreview = ref('')
 
+// Handle file upload and preview
 const handleFileUpload = (event) => {
-    console.log(ingredientData)
     const file = event.target.files?.[0]
     if (file) {
         imageFile.value = file
-        imagePreview.value = URL.createObjectURL(file) // Generate preview URL
+        imagePreview.value = URL.createObjectURL(file)
     }
 }
 
+// Submit ingredient form
 const submitIngredient = async () => {
     if (!imageFile.value) {
         alert('Please upload an image.')
         return
     }
 
-    // Format the expireDate before submitting
+    // Format expireDate before submitting
     ingredientData.value.expireDate = formatDateToDDMMYY(
         ingredientData.value.expireDate
     )
 
     try {
         const formData = new FormData()
-
-        // Append ingredient data as a JSON Blob
         formData.append(
             'ingredient',
             new Blob([JSON.stringify(ingredientData.value)], {
                 type: 'application/json',
             })
         )
-
-        // Append the image file directly
         formData.append('image', imageFile.value)
 
-        console.log(formData)
-
-        // Send the form data to the API
         await ingredientApi.createIngredient(formData)
         alert('Ingredient added successfully!')
+        router.push('/ingredient')
     } catch (error) {
         console.error('Error adding ingredient:', error.response?.data)
         alert(
@@ -73,6 +68,24 @@ const submitIngredient = async () => {
     }
 }
 
+// Validate price range
+const checkPriceRange = () => {
+    if (ingredientData.value.price > 1000) {
+        ingredientData.value.price = 1000
+    } else if (ingredientData.value.price < 0) {
+        ingredientData.value.price = 0
+    }
+}
+
+const checkQtyRange = () => {
+    if (ingredientData.value.qty > 10000) {
+        ingredientData.value.qty = 10000
+    } else if (ingredientData.value.qty < 0) {
+        ingredientData.value.qty = 0
+    }
+}
+
+// Navigate back
 const goBack = () => {
     router.push('/ingredient')
 }
@@ -84,7 +97,6 @@ const goBack = () => {
         <main
             class="ml-[14rem] w-full py-4 px-8 flex-col gap-4 bg-gray-50 h-full min-h-screen"
         >
-            <!-- Back button -->
             <div
                 class="flex bg-[#C7C7C7FF] text-white rounded-lg px-3 py-2 w-10 mb-4"
                 @click="goBack"
@@ -120,7 +132,10 @@ const goBack = () => {
                         <input
                             type="number"
                             id="price"
-                            v-model="ingredientData.price"
+                            v-model.number="ingredientData.price"
+                            min="0"
+                            max="1000"
+                            @input="checkPriceRange()"
                             required
                             class="border p-2 rounded w-full"
                         />
@@ -133,9 +148,11 @@ const goBack = () => {
                         <input
                             type="number"
                             id="qty"
-                            v-model="ingredientData.qty"
+                            v-model.number="ingredientData.qty"
                             required
+                            @input="checkQtyRange()"
                             min="0"
+                            max="10000"
                             class="border p-2 rounded w-full"
                         />
                     </div>
@@ -166,15 +183,11 @@ const goBack = () => {
                             type="date"
                             id="expireDate"
                             v-model="ingredientData.expireDate"
-                            @change="
-                                formatDateToDDMMYY(ingredientData.expireDate)
-                            "
                             required
                             class="border p-2 rounded w-full"
                         />
                     </div>
 
-                    <!-- Image upload field -->
                     <div>
                         <label for="image" class="block font-semibold mb-1 pt-3"
                             >Upload Image</label
@@ -188,7 +201,6 @@ const goBack = () => {
                         />
                     </div>
 
-                    <!-- Image preview -->
                     <div v-if="imagePreview" class="mt-4">
                         <img
                             :src="imagePreview"
@@ -196,12 +208,17 @@ const goBack = () => {
                             class="w-32 h-32 object-cover"
                         />
                     </div>
+
                     <div class="flex items-center justify-center">
                         <button
                             type="submit"
-                            class="w-3/6 mt-4 bg-yellow-300 text- p-2 rounded shadow-md transition-transform"
-                            onmouseover="this.style.transform='scale(1.05)'"
-                            onmouseout="this.style.transform='scale(1)'"
+                            class="w-3/6 mt-4 bg-yellow-300 p-2 rounded shadow-md"
+                            @mouseover="
+                                event.target.style.transform = 'scale(1.05)'
+                            "
+                            @mouseout="
+                                event.target.style.transform = 'scale(1)'
+                            "
                         >
                             Add Ingredient
                         </button>
@@ -211,3 +228,17 @@ const goBack = () => {
         </main>
     </div>
 </template>
+
+<style scoped>
+input {
+    display: block;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 8px 16px;
+    color: black;
+    border: none;
+    cursor: pointer;
+}
+</style>

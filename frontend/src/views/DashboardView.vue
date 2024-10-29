@@ -1,7 +1,8 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue'
-import DailySalesChart from '@/components/DailySalesChart.vue'
-import TotalIncomeChart from '@/components/TotalIncomeChart.vue'
+import IncomeChart from '@/components/IncomeChart.vue'
+import ExpenseChart from '@/components/ExpenseChart.vue'
+import TotalChart from '@/components/TotalChart.vue'
 </script>
 
 <template>
@@ -16,16 +17,21 @@ import TotalIncomeChart from '@/components/TotalIncomeChart.vue'
             <section class="w-full h-12">
                 <span class="font-bold text-5xl">Dashboard</span>
             </section>
-            <div class="flex flex-row gap-4">
+            <div class="flex flex-row flex-wrap gap-4">
                 <div
                     class="m-auto p-6 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD] flex-1 h-[400px]"
                 >
-                    <DailySalesChart />
+                    <IncomeChart />
                 </div>
                 <div
                     class="m-auto p-6 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD] flex-1 h-[400px]"
                 >
-                    <TotalIncomeChart />
+                    <ExpenseChart />
+                </div>
+                <div
+                    class="m-auto p-6 rounded-lg shadow-md border border-gray-300 bg-[#FDFDFD] flex-1 h-[400px]"
+                >
+                    <TotalChart />
                 </div>
             </div>
         </main>

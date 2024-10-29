@@ -7,7 +7,7 @@ import router from '@/router'
 
 const foodData = ref({
     name: '',
-    price: null,
+    price: 0,
     status: 'AVAILABLE',
     recipes: [],
 })
@@ -113,6 +113,14 @@ const validateInput = (ingredient) => {
         ingredient.quantity = ingredient.qty // Set to max if over limit
     }
 }
+
+const checkPriceRange = () => {
+    if (foodData.value.price > 1000) {
+        foodData.value.price = 1000
+    } else if (foodData.value.price < 0) {
+        foodData.value.price = 0
+    }
+}
 </script>
 
 <template>
@@ -133,6 +141,9 @@ const validateInput = (ingredient) => {
                 <input
                     v-model.number="foodData.price"
                     type="number"
+                    min="0"
+                    max="1000"
+                    @input="checkPriceRange()"
                     placeholder="Price"
                     required
                 />

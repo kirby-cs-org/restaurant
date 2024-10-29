@@ -4,7 +4,9 @@
     >
         <div class="flex flex-col">
             <div class="flex items-center">
-                <span class="text-4xl pr-2">Order #{{ index }}</span>
+                <span class="text-4xl pr-2"
+                    >Order #{{ order.id.slice(0, 4) }}</span
+                >
                 <span
                     class="align-text-bottom text-lg"
                     :style="{
@@ -87,6 +89,7 @@ const markOrderSuccess = async (id) => {
     try {
         await orderApi.updateOrderStatus({ id, status: 'SUCCESS' })
         emit('mark-success', id)
+        window.location.reload()
     } catch (error) {
         console.error('Error marking order as success:', error)
     }
