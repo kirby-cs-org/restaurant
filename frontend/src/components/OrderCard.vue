@@ -56,7 +56,9 @@
             </span>
         </div>
         <div class="flex flex-col items-end">
-            <span class="text-4xl text-gray-750">{{ order.total }} ฿</span>
+            <span class="text-4xl text-gray-750"
+                >{{ order.total + order.total * 0.07 }} ฿</span
+            >
         </div>
     </div>
 </template>
