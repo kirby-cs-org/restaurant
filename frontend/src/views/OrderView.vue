@@ -93,9 +93,9 @@ const handleViewDetail = (orderId) => {
             class="ml-[14rem] w-full py-4 px-8 flex flex-col gap-4 bg-gray-50 h-screen"
         >
             <!-- Search section -->
-            <section class="search">
+            <!-- <section class="search">
                 <Search @update-search="searchQuery = $event" />
-            </section>
+            </section> -->
 
             <!-- Orders heading -->
             <section class="w-full">
